@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-    private static final String AUTHORIZATION_HEADER_KEY = "Authorization";
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
@@ -57,25 +56,12 @@ public class AuthController {
         return ResponseEntity.ok(createJwtResponse(authentication, newToken));
     }
 
-    @PostMapping("/api/requesttoken")
-    public ResponseEntity<?> reissueAccessToken(HttpServletRequest request) throws AuthenticationException {
+    @PostMapping("/api/refreshtoken")
+    public ResponseEntity<?> reissueAccessToken(HttpServletRequest request) {
         String refreshToken = tokenProvider.resolveToken(request);
-
-        if (refreshToken == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        Token token = tokenService.findTokenByRefreshToken(refreshToken)
-                                  .orElseThrow(() -> new IllegalArgumentException("토큰을 DB에서 찾을 수 없습니다."));
-
-        if (!tokenProvider.validateToken(refreshToken)) {
-            tokenService.deleteTokenByUserId(token.getUserId());
-            throw new AuthenticationException("만료된 토큰입니다.");
-        }
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String newAccessToken = tokenProvider.createAccessToken(authentication);
-        token.setAccessToken(newAccessToken);
+        Token token = new Token(authentication.getName(), newAccessToken, refreshToken);
 
         tokenService.updateTokenByUserId(token);
         return ResponseEntity.ok(createJwtResponse(authentication, token));
@@ -113,23 +99,16 @@ public class AuthController {
         return newToken;
     }
 
-    private JwtResponse createJwtResponse(Authentication authentication, Token newToken) {
+    private JwtResponse createJwtResponse(Authentication authentication, Token token) {
         User user = (User) authentication.getPrincipal();
-        List<String> roles = getRoles(user);
 
         return JwtResponse.builder()
-                          .token(newToken)
+                          .accessToken(token.getAccessToken())
+                          .refreshToken(token.getRefreshToken())
                           .userId(user.getUserId())
                           .name(user.getName())
-                          .roles(roles)
+                          .role(user.getRole())
                           .build();
-    }
-
-    private List<String> getRoles(User user) {
-        return user.getAuthorities()
-                   .stream()
-                   .map(GrantedAuthority::getAuthority)
-                   .collect(Collectors.toList());
     }
 
 }

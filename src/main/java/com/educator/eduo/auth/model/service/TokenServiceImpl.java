@@ -24,11 +24,6 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Optional<Token> findTokenByRefreshToken(String refreshToken) {
-        return tokenMapper.selectTokenByRefreshToken(refreshToken);
-    }
-
-    @Override
     @Transactional
     public boolean registerToken(Token token) {
         return tokenMapper.insertToken(token) == 1;
@@ -37,11 +32,6 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public boolean updateTokenByUserId(Token token) {
         return tokenMapper.updateTokenByUserId(token) == 1;
-    }
-
-    @Override
-    public boolean deleteTokenByUserId(String userId) {
-        return tokenMapper.deleteTokenByUserId(userId) == 1;
     }
 
 }

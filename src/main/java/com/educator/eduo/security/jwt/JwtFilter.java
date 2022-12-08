@@ -4,7 +4,6 @@ import com.educator.eduo.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -20,7 +19,6 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
-    public static final String AUTHORIZATION_HEADER_KEY = "Authorization";
 
     private final TokenProvider tokenProvider;
 
