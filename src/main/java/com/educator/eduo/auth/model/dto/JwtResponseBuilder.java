@@ -15,8 +15,17 @@ public class JwtResponseBuilder {
     }
 
     public JwtResponseBuilder token(Token token) {
-        this.accessToken = token.getAccessToken();
-        this.refreshToken = token.getRefreshToken();
+        return this.accessToken(token.getAccessToken())
+                   .refreshToken(token.getRefreshToken());
+    }
+
+    public JwtResponseBuilder accessToken(String accessToken) {
+        this.accessToken = accessToken;
+        return this;
+    }
+
+    public JwtResponseBuilder refreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
         return this;
     }
 

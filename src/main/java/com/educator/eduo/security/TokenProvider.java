@@ -6,6 +6,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
+import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,12 +23,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
+import org.springframework.util.StringUtils;
 
 @Component
 public class TokenProvider implements InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
-    private static final String AUTHORITIES_KEY = "auth";
+    private static final String AUTHORITIES_CLAIM_KEY = "auth";
+    private static final String AUTHORIZATION_HEADER_KEY = "Authorization";
 
     private final String secret;
     private final long accessTokenValidityInMilliSeconds;
@@ -83,6 +86,16 @@ public class TokenProvider implements InitializingBean {
         return false;
     }
 
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER_KEY);
+
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+
+        return null;
+    }
+
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token).getBody();
 
@@ -103,7 +116,7 @@ public class TokenProvider implements InitializingBean {
 
         return Jwts.builder()
                    .setSubject(authentication.getName())
-                   .claim(AUTHORITIES_KEY, authorities)
+                   .claim(AUTHORITIES_CLAIM_KEY, authorities)
                    .setExpiration(expirationTime)
                    .signWith(this.key, SignatureAlgorithm.ES512)
                    .compact();
@@ -117,7 +130,7 @@ public class TokenProvider implements InitializingBean {
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(Claims claims) {
-        String[] authorities = claims.get(AUTHORITIES_KEY)
+        String[] authorities = claims.get(AUTHORITIES_CLAIM_KEY)
                                      .toString()
                                      .split(",");
 
