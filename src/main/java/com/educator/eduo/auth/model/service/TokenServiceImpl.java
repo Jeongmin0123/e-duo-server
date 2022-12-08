@@ -24,6 +24,11 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public Optional<Token> findTokenByRefreshToken(String refreshToken) {
+        return tokenMapper.selectTokenByRefreshToken(refreshToken);
+    }
+
+    @Override
     @Transactional
     public boolean registerToken(Token token) {
         return tokenMapper.insertToken(token) == 1;
