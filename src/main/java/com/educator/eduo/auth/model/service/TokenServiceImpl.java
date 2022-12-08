@@ -1,37 +1,39 @@
 package com.educator.eduo.auth.model.service;
 
+import com.educator.eduo.auth.model.dto.JwtResponse;
 import com.educator.eduo.auth.model.entity.Token;
 import com.educator.eduo.auth.model.mapper.TokenMapper;
 import java.util.Optional;
+
+import com.educator.eduo.security.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TokenServiceImpl implements TokenService {
 
+    private final TokenProvider tokenProvider;
     private final TokenMapper tokenMapper;
 
+
     @Autowired
-    public TokenServiceImpl(TokenMapper tokenMapper) {
+    public TokenServiceImpl(TokenProvider tokenProvider, TokenMapper tokenMapper) {
+        this.tokenProvider = tokenProvider;
         this.tokenMapper = tokenMapper;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Optional<Token> findTokenByUserId(String userId) {
-        return tokenMapper.selectTokenByUserId(userId);
-    }
-
-    @Override
     @Transactional
-    public boolean registerToken(Token token) {
-        return tokenMapper.insertToken(token) == 1;
-    }
+    public JwtResponse reissueAccessToken(String refreshToken) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String newAccessToken = tokenProvider.createAccessToken(authentication);
+        Token token = new Token(authentication.getName(), newAccessToken, refreshToken);
 
-    @Override
-    public boolean updateTokenByUserId(Token token) {
-        return tokenMapper.updateTokenByUserId(token) == 1;
+        tokenMapper.updateTokenByUserId(token);
+        return tokenProvider.createJwtResponse(authentication, token);
     }
 
 }

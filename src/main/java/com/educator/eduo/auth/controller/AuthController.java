@@ -35,11 +35,13 @@ public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     private final TokenProvider tokenProvider;
+    private final TokenService tokenService;
     private final UserService userService;
 
     @Autowired
-    public AuthController(TokenProvider tokenProvider, UserService userService) {
+    public AuthController(TokenProvider tokenProvider, TokenService tokenService, UserService userService) {
         this.tokenProvider = tokenProvider;
+        this.tokenService = tokenService;
         this.userService = userService;
     }
 
@@ -52,7 +54,7 @@ public class AuthController {
     @PostMapping("/api/refreshtoken")
     public ResponseEntity<?> reissueAccessToken(HttpServletRequest request) {
         String refreshToken = tokenProvider.resolveToken(request);
-        JwtResponse jwtResponse = userService.reissueAccessToken(refreshToken);
+        JwtResponse jwtResponse = tokenService.reissueAccessToken(refreshToken);
         return ResponseEntity.ok(jwtResponse);
     }
 
