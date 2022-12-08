@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.educator.eduo.auth.model.mapper.UserMapper">
+
+<!--	<select id="listUser" resultType="User">-->
+<!--		select username,password,email,domain,role from user-->
+<!--	</select>-->
+	<resultMap id="userResultMap" type="User">
+		<id column="user_id" property="userId"/>
+		<result column="password" property="password"/>
+		<result column="name" property="name"/>
+		<result column="domain" property="domain"/>
+		<result column="phone" property="phone"/>
+		<result column="activated" property="activated"/>
+		<result column="role" property="role"/>
+		<result column="register_date" property="registerDate"/>
+	</resultMap>
+
+	<select id="selectOneByUserId" parameterType="string"
+		resultMap="userResultMap">
+		select user_id, password, name, domain, phone, activated, role, register_date
+		from user
+		where user_id = #{userId}
+	</select>
+	
+<!--	<select id="existsByUsername" parameterType="string"-->
+<!--		resultType="int">-->
+<!--		select count(username)-->
+<!--		from user-->
+<!--		where username=#{username}-->
+<!--	</select>-->
+<!--	-->
+<!--	<select id="existsByEmail" parameterType="map" resultType="int">-->
+<!--		select count(username)-->
+<!--		from user-->
+<!--		where email=#{email} and domain=#{domain}-->
+<!--	</select>-->
+<!--	-->
+<!--	<insert id="save" parameterType="user">-->
+<!--		insert into user-->
+<!--		(username,password,email,domain,residence) values-->
+<!--		(#{username},#{password},#{email},#{domain},#{residence})-->
+<!--	</insert>-->
+<!--	<insert id="registerCategory" parameterType="map">-->
+<!--		insert into favoritecate (username,categoryCode)-->
+<!--		values-->
+<!--		<foreach collection="favoritecateDTOs" item="categoryCode" separator=",">-->
+<!--			(#{username},#{categoryCode})-->
+<!--		</foreach>-->
+<!--	</insert>-->
+<!--	-->
+<!--	-->
+<!--	<select id="getUserInfo" parameterType="string" resultType="MyPageDto">-->
+<!--		select u.username,u.email,u.domain,u.role,u.joinDate,u.residence,d.sidoName,d.gugunName,d.dongName from user u-->
+<!--		left outer join dongcode d  on u.residence = d.dongcode where username = #{username}-->
+<!--	</select>-->
+<!--	<select id="getUser" parameterType="string" resultType="user">-->
+<!--		select username,role-->
+<!--		 from user where username = #{username}-->
+<!--	</select>-->
+<!--	-->
+<!--	<update id="updateUser" parameterType="user">-->
+<!--		update user-->
+<!--		<trim prefix="set" suffixOverrides=",">-->
+<!--			<if test="password != null">password = #{password},</if>-->
+<!--			<if test="email != null">email = #{email},</if>-->
+<!--			<if test="domain != null">domain = #{domain},</if>-->
+<!--		</trim>-->
+<!--		where username = #{username}-->
+<!--	</update>-->
+<!--	-->
+<!--	<select id="findPassword" parameterType="string">-->
+<!--		select password user where username = #{username}-->
+<!--	</select>-->
+<!--	-->
+<!--	<select id="getUserDong" parameterType="String" resultType="FavoriteLoc">-->
+<!--		select f.username,f.dongCode,d.sidoName,d.gugunName,d.dongName -->
+<!--		from favoriteloc f left join dongcode d on d.dongCode = f.dongcode where username = #{username};-->
+<!--	</select>-->
+<!--	-->
+<!--	-->
+<!--	<select id="getUserKey" parameterType="string" resultType="FavoriteKey">-->
+<!--		select f.username,c.categoryCode, c.tag from -->
+<!--		favoritecate f right outer join category c on c.categoryCode = f.categoryCode -->
+<!--		where f.username = #{username};-->
+<!--	</select>-->
+
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.educator.eduo.auth.model.mapper.TokenMapper">
+	<resultMap id="tokenResultMap" type="Token">
+		<id column="user_id" property="userId"/>
+		<result column="access_token" property="accessToken"/>
+		<result column="refresh_token" property="refreshToken"/>
+	</resultMap>
+
+	<select id="selectTokenByUserId" parameterType="string" resultMap="tokenResultMap">
+		SELECT user_id, access_token, refresh_token
+		FROM token
+		WHERE user_id = #{ userId }
+	</select>
+	
+	<insert id="insertToken" parameterType="token">
+		INSERT INTO token (user_id, access_token, refresh_token)
+		VALUES (#{ userId }, #{ accessToken }, #{ refreshToken })
+	</insert>
+
+	<update id="updateTokenByUserId" parameterType="token">
+		UPDATE token
+		SET access_token = #{ accessToken }, refresh_token = #{ refreshToken }
+		WHERE user_id = #{ userId }
+	</update>
+</mapper>
