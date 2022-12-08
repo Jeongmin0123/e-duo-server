@@ -39,6 +39,13 @@ public class User implements UserDetails {
     }
 
     @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(this.role));
+        return authorities;
+    }
+
+    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
@@ -56,13 +63,6 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.activated == 1;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(this.role));
-        return authorities;
     }
 
 }
