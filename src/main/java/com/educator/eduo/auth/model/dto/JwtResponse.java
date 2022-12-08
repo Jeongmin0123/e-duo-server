@@ -1,30 +1,26 @@
 package com.educator.eduo.auth.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 public class JwtResponse {
 
-    private static final String TYPE = "Bearer";
-    
+    private String type = "Bearer";
     private String accessToken;
     private String refreshToken;
     private String userId;
-    private List<String> roles;
     private String name;
+    private List<String> roles;
 
-    public JwtResponse(String accessToken, String refreshToken, String userId, List<String> roles, String name) {
+    public JwtResponse(String accessToken, String refreshToken, String userId, String name, List<String> roles) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.userId = userId;
-        this.roles = roles;
         this.name = name;
+        this.roles = roles;
     }
 
     public JwtResponse(String accessToken, String refreshToken) {
