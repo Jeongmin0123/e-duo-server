@@ -23,9 +23,8 @@ public class JwtResponse {
         this.roles = roles;
     }
 
-    public JwtResponse(String accessToken, String refreshToken) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
+    public static JwtResponseBuilder builder() {
+        return new JwtResponseBuilder();
     }
 
 }
