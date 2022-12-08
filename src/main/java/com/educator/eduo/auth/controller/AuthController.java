@@ -67,18 +67,4 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-
-    private JwtResponse createJwtResponse(Authentication authentication, Token token) {
-        User user = (User) authentication.getPrincipal();
-
-        return JwtResponse.builder()
-                          .accessToken(token.getAccessToken())
-                          .refreshToken(token.getRefreshToken())
-                          .userId(user.getUserId())
-                          .name(user.getName())
-                          .role(user.getRole())
-                          .build();
-    }
-
 }
