@@ -57,11 +57,6 @@ public class AuthController {
     @PostMapping("/api/refreshtoken")
     public ResponseEntity<?> reissueAccessToken(HttpServletRequest request) {
         String refreshToken = tokenProvider.resolveToken(request);
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String newAccessToken = tokenProvider.createAccessToken(authentication);
-//        Token token = new Token(authentication.getName(), newAccessToken, refreshToken);
-//
-//        tokenService.updateTokenByUserId(token);
         JwtResponse jwtResponse = userService.reissueAccessToken(refreshToken);
         return ResponseEntity.ok(jwtResponse);
     }

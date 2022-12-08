@@ -40,6 +40,17 @@ public class UserServiceImpl implements UserService{
         return createJwtResponse(authentication, newToken);
     }
 
+    @Override
+    @Transactional
+    public JwtResponse reissueAccessToken(String refreshToken) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String newAccessToken = tokenProvider.createAccessToken(authentication);
+        Token token = new Token(authentication.getName(), newAccessToken, refreshToken);
+
+        tokenMapper.updateTokenByUserId(token);
+        return createJwtResponse(authentication, token);
+    }
+
     private Authentication saveAuthentication(LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginDto.getUserId(), loginDto.getPassword()
