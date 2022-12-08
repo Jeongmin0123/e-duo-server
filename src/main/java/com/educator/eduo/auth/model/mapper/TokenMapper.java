@@ -11,4 +11,6 @@ public interface TokenMapper {
 
     int insertToken(Token token);
 
+    int updateTokenByUserId(Token token);
+
 }

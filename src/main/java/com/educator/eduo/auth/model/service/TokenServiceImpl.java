@@ -29,4 +29,9 @@ public class TokenServiceImpl implements TokenService {
         return tokenMapper.insertToken(token) == 1;
     }
 
+    @Override
+    public boolean updateTokenByUserId(Token token) {
+        return tokenMapper.updateTokenByUserId(token) == 1;
+    }
+
 }

@@ -9,4 +9,6 @@ public interface TokenService {
 
     boolean registerToken(Token token);
 
+    boolean updateTokenByUserId(Token newToken);
+
 }
