@@ -23,7 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userMapper.selectOneByUserId(userId)
                               .orElseThrow(() -> new UsernameNotFoundException(userId + "를 DB에서 찾을 수 없습니다."));
 
-        logger.info("loadUserByUsername -> {}", user);
+        logger.info("loadUserByUsername => {}", user);
         logger.info("authorities: {}", user.getAuthorities());
         return user;
     }
