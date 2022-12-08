@@ -10,6 +10,8 @@ import com.educator.eduo.security.TokenProvider;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,17 +54,31 @@ public class AuthController {
         logger.info("Login Target: {}", loginDto);
         Authentication authentication = saveAuthentication(loginDto);
         Token newToken = registerOrUpdateJwtToken(authentication);
+        return ResponseEntity.ok(createJwtResponse(authentication, newToken));
+    }
 
-        User user = (User) authentication.getPrincipal();
-        List<String> roles = getRoles(user);
-        return ResponseEntity.ok(
-                JwtResponse.builder()
-                           .token(newToken)
-                           .userId(user.getUserId())
-                           .name(user.getName())
-                           .roles(roles)
-                           .build()
-        );
+    @PostMapping("/api/requesttoken")
+    public ResponseEntity<?> reissueAccessToken(HttpServletRequest request) throws AuthenticationException {
+        String refreshToken = tokenProvider.resolveToken(request);
+
+        if (refreshToken == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Token token = tokenService.findTokenByRefreshToken(refreshToken)
+                                  .orElseThrow(() -> new IllegalArgumentException("토큰을 DB에서 찾을 수 없습니다."));
+
+        if (!tokenProvider.validateToken(refreshToken)) {
+            tokenService.deleteTokenByUserId(token.getUserId());
+            throw new AuthenticationException("만료된 토큰입니다.");
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String newAccessToken = tokenProvider.createAccessToken(authentication);
+        token.setAccessToken(newAccessToken);
+
+        tokenService.updateTokenByUserId(token);
+        return ResponseEntity.ok(createJwtResponse(authentication, token));
     }
 
     @GetMapping("/api/logout")
@@ -95,6 +111,18 @@ public class AuthController {
         }
 
         return newToken;
+    }
+
+    private JwtResponse createJwtResponse(Authentication authentication, Token newToken) {
+        User user = (User) authentication.getPrincipal();
+        List<String> roles = getRoles(user);
+
+        return JwtResponse.builder()
+                          .token(newToken)
+                          .userId(user.getUserId())
+                          .name(user.getName())
+                          .roles(roles)
+                          .build();
     }
 
     private List<String> getRoles(User user) {
