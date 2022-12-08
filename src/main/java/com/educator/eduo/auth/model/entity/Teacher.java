@@ -6,7 +6,9 @@ import lombok.Data;
 //@AllArgsConstructor
 //@Builder
 @Data
-public class Teacher extends User{
+public class Teacher extends User {
+
     private String subject;
     private String imageSrc;
+
 }

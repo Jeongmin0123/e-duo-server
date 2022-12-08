@@ -6,5 +6,6 @@ import lombok.Data;
 //@AllArgsConstructor
 //@Builder
 @Data
-public class Assistant extends User{
+public class Assistant extends User {
+
 }

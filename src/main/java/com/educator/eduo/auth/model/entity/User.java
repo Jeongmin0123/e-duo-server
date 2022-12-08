@@ -18,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class User implements UserDetails {
+
     private String userId;
     private String password;
     private String name;
@@ -27,11 +28,11 @@ public class User implements UserDetails {
     private String role;
     private String registerDate;
 
-
     @Override
     public String getUsername() {
         return this.userId;
     }
+
     @Override
     public String getPassword() {
         return this.password;
@@ -54,13 +55,14 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return this.activated==1;
+        return this.activated == 1;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        GrantedAuthority authority = new SimpleGrantedAuthority(this.role);
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(authority);
+        authorities.add(new SimpleGrantedAuthority(this.role));
         return authorities;
     }
+
 }
