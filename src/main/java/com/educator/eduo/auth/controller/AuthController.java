@@ -51,21 +51,19 @@ public class AuthController {
     @PostMapping("/auth/login")
     public ResponseEntity<?> authenticate(@RequestBody LoginDto loginDto) {
         JwtResponse jwtResponse = userService.authenticate(loginDto);
-//        logger.info("Login Target: {}", loginDto);
-//        Authentication authentication = saveAuthentication(loginDto);
-//        Token newToken = registerOrUpdateJwtToken(authentication);
         return ResponseEntity.ok(jwtResponse);
     }
 
     @PostMapping("/api/refreshtoken")
     public ResponseEntity<?> reissueAccessToken(HttpServletRequest request) {
         String refreshToken = tokenProvider.resolveToken(request);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String newAccessToken = tokenProvider.createAccessToken(authentication);
-        Token token = new Token(authentication.getName(), newAccessToken, refreshToken);
-
-        tokenService.updateTokenByUserId(token);
-        return ResponseEntity.ok(createJwtResponse(authentication, token));
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String newAccessToken = tokenProvider.createAccessToken(authentication);
+//        Token token = new Token(authentication.getName(), newAccessToken, refreshToken);
+//
+//        tokenService.updateTokenByUserId(token);
+        JwtResponse jwtResponse = userService.reissueAccessToken(refreshToken);
+        return ResponseEntity.ok(jwtResponse);
     }
 
     @GetMapping("/api/logout")
