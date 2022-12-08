@@ -7,4 +7,6 @@ public interface TokenService {
 
     Optional<Token> findTokenByUserId(String userId);
 
+    boolean registerToken(Token token);
+
 }

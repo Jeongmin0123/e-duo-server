@@ -20,7 +20,13 @@ public class TokenServiceImpl implements TokenService {
     @Override
     @Transactional(readOnly = true)
     public Optional<Token> findTokenByUserId(String userId) {
-        return tokenMapper.selectOneByUserId(userId);
+        return tokenMapper.selectTokenByUserId(userId);
+    }
+
+    @Override
+    @Transactional
+    public boolean registerToken(Token token) {
+        return tokenMapper.insertToken(token) == 1;
     }
 
 }

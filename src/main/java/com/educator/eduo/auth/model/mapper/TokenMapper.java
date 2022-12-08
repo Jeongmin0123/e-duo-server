@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface TokenMapper {
 
-    Optional<Token> selectOneByUserId(String userId);
+    Optional<Token> selectTokenByUserId(String userId);
+
+    int insertToken(Token token);
 
 }

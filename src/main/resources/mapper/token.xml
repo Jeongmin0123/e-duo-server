@@ -9,9 +9,14 @@
 		<result column="refresh_token" property="refreshToken"/>
 	</resultMap>
 
-	<select id="selectOneByUserId" parameterType="string" resultMap="tokenResultMap">
-		select user_id, access_token, refresh_token
-		from token
-		where user_id = #{userId}
+	<select id="selectTokenByUserId" parameterType="string" resultMap="tokenResultMap">
+		SELECT user_id, access_token, refresh_token
+		FROM token
+		WHERE user_id = #{ userId }
 	</select>
+	
+	<insert id="insertToken" parameterType="token">
+		INSERT INTO token (user_id, access_token, refresh_token)
+		VALUES (#{ userId }, #{ accessToken }, #{ refreshToken })
+	</insert>
 </mapper>
