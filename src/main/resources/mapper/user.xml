@@ -7,8 +7,8 @@
 <!--	<select id="listUser" resultType="User">-->
 <!--		select username,password,email,domain,role from user-->
 <!--	</select>-->
-	<resultMap type="User" id="userResultMap">
-		<result column="user_id" property="userId"/>
+	<resultMap id="userResultMap" type="User">
+		<id column="user_id" property="userId"/>
 		<result column="password" property="password"/>
 		<result column="name" property="name"/>
 		<result column="domain" property="domain"/>
