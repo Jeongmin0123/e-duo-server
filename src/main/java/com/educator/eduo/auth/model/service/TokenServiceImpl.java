@@ -39,4 +39,9 @@ public class TokenServiceImpl implements TokenService {
         return tokenMapper.updateTokenByUserId(token) == 1;
     }
 
+    @Override
+    public boolean deleteTokenByUserId(String userId) {
+        return tokenMapper.deleteTokenByUserId(userId) == 1;
+    }
+
 }

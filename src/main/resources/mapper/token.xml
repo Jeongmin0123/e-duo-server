@@ -31,4 +31,9 @@
 		SET access_token = #{ accessToken }, refresh_token = #{ refreshToken }
 		WHERE user_id = #{ userId }
 	</update>
+
+	<delete id="deleteTokenByUserId" parameterType="string">
+		DELETE FROM token
+		WHERE user_id = #{ userId }
+	</delete>
 </mapper>
