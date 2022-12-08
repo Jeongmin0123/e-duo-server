@@ -18,11 +18,11 @@
 		<result column="register_date" property="registerDate"/>
 	</resultMap>
 
-	<select id="selectOneByUserId" parameterType="string"
+	<select id="selectUserByUserId" parameterType="string"
 		resultMap="userResultMap">
-		select user_id, password, name, domain, phone, activated, role, register_date
-		from user
-		where user_id = #{userId}
+		SELECT user_id, password, name, domain, phone, activated, role, register_date
+		FROM user
+		WHERE user_id = #{ userId }
 	</select>
 	
 <!--	<select id="existsByUsername" parameterType="string"-->
