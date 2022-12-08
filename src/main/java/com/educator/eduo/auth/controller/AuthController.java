@@ -74,31 +74,7 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Authentication saveAuthentication(LoginDto loginDto) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                loginDto.getUserId(), loginDto.getPassword()
-        );
 
-        // 메서드 authenticate()에서 UserDetailsServiceImpl의 loadUserByUserName을 호출하고, 최종적으로 Authentication을 만들어준다.
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        logger.info("Save Authenticate In Context: {}", authentication);
-
-        return authentication;
-    }
-
-    private Token registerOrUpdateJwtToken(Authentication authentication) {
-        Optional<Token> oldToken = tokenService.findTokenByUserId(authentication.getName());
-        Token newToken = tokenProvider.createNewToken(authentication);
-
-        if (oldToken.isPresent()) {
-            tokenService.updateTokenByUserId(newToken);
-        } else {
-            tokenService.registerToken(newToken);
-        }
-
-        return newToken;
-    }
 
     private JwtResponse createJwtResponse(Authentication authentication, Token token) {
         User user = (User) authentication.getPrincipal();
