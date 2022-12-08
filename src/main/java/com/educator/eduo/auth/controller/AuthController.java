@@ -34,16 +34,11 @@ public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
-    private final TokenService tokenService;
     private final UserService userService;
 
     @Autowired
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, TokenProvider tokenProvider,
-            TokenService tokenService, UserService userService) {
-        this.authenticationManagerBuilder = authenticationManagerBuilder;
-        this.tokenService = tokenService;
+    public AuthController(TokenProvider tokenProvider, UserService userService) {
         this.tokenProvider = tokenProvider;
         this.userService = userService;
     }
