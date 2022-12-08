@@ -1,5 +1,6 @@
 package com.educator.eduo.security;
 
+import com.educator.eduo.auth.model.entity.Token;
 import com.educator.eduo.auth.model.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -55,6 +56,14 @@ public class TokenProvider implements InitializingBean {
 
     public String createRefreshToken(Authentication authentication) {
         return createToken(authentication, this.refreshTokenValidityInMilliSeconds);
+    }
+
+    public Token createNewToken(Authentication authentication) {
+        return new Token(
+                authentication.getName(),
+                createAccessToken(authentication),
+                createRefreshToken(authentication)
+        );
     }
 
     public boolean validateToken(String token) {
