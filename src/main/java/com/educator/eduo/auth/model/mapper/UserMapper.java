@@ -8,6 +8,6 @@ import java.util.Optional;
 @Mapper
 public interface UserMapper {
 
-    Optional<User> selectOneByUserId(String userId);
+    Optional<User> selectUserByUserId(String userId);
 
 }
