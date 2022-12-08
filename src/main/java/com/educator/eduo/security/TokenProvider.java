@@ -30,6 +30,7 @@ public class TokenProvider implements InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
     private static final String AUTHORITIES_CLAIM_KEY = "auth";
+    private static final String NAME_CLAIM_KEY = "name";
     private static final String AUTHORIZATION_HEADER_KEY = "Authorization";
 
     private final String secret;
@@ -99,34 +100,38 @@ public class TokenProvider implements InitializingBean {
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token).getBody();
 
-        UserDetails principal = User.builder()
-                                    .userId(claims.getSubject())
-                                    .build();
+        User principal = User.builder()
+                             .userId(claims.getSubject())
+                             .name((String) claims.get(NAME_CLAIM_KEY))
+                             .role((String) claims.get(AUTHORITIES_CLAIM_KEY))
+                             .build();
 
         Collection<? extends GrantedAuthority> authorities = getAuthorities(claims);
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
     private String createToken(Authentication authentication, long validityTime) {
-        String authorities = getAuthorities(authentication);
+        User user = (User) authentication.getPrincipal();
+        String authorities = getAuthorities(user);
         logger.info("authorities of token: {}", authorities);
 
         Date expirationTime = new Date(System.currentTimeMillis() + validityTime);
         logger.info("expiration time of token: {}", expirationTime);
 
         return Jwts.builder()
-                   .setSubject(authentication.getName())
+                   .setSubject(user.getUserId())
                    .claim(AUTHORITIES_CLAIM_KEY, authorities)
+                   .claim(NAME_CLAIM_KEY, user.getName())
                    .setExpiration(expirationTime)
-                   .signWith(this.key, SignatureAlgorithm.ES512)
+                   .signWith(this.key, SignatureAlgorithm.HS512)
                    .compact();
     }
 
-    private String getAuthorities(Authentication authentication) {
-        return authentication.getAuthorities()
-                             .stream()
-                             .map(GrantedAuthority::getAuthority)
-                             .collect(Collectors.joining(","));
+    private String getAuthorities(User user) {
+        return user.getAuthorities()
+                   .stream()
+                   .map(GrantedAuthority::getAuthority)
+                   .collect(Collectors.joining(","));
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(Claims claims) {
