@@ -50,10 +50,11 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public ResponseEntity<?> authenticate(@RequestBody LoginDto loginDto) {
-        logger.info("Login Target: {}", loginDto);
-        Authentication authentication = saveAuthentication(loginDto);
-        Token newToken = registerOrUpdateJwtToken(authentication);
-        return ResponseEntity.ok(createJwtResponse(authentication, newToken));
+        JwtResponse jwtResponse = userService.authenticate(loginDto);
+//        logger.info("Login Target: {}", loginDto);
+//        Authentication authentication = saveAuthentication(loginDto);
+//        Token newToken = registerOrUpdateJwtToken(authentication);
+        return ResponseEntity.ok(jwtResponse);
     }
 
     @PostMapping("/api/refreshtoken")
