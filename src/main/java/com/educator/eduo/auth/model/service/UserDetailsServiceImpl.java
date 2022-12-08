@@ -1,7 +1,7 @@
 package com.educator.eduo.auth.model.service;
 
 import com.educator.eduo.auth.model.mapper.UserMapper;
-import com.educator.eduo.auth.model.vo.User;
+import com.educator.eduo.auth.model.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

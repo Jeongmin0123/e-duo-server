@@ -1,4 +1,4 @@
-package com.educator.eduo.auth.model.vo;
+package com.educator.eduo.auth.model.entity;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

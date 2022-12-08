@@ -1,4 +1,4 @@
-package com.educator.eduo.auth.model.vo;
+package com.educator.eduo.auth.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
