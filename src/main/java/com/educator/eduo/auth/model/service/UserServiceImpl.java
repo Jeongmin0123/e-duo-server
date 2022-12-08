@@ -2,6 +2,7 @@ package com.educator.eduo.auth.model.service;
 
 import com.educator.eduo.auth.model.dto.JwtResponse;
 import com.educator.eduo.auth.model.dto.LoginDto;
+import com.educator.eduo.auth.model.dto.OAuthLoginDto;
 import com.educator.eduo.auth.model.entity.Token;
 import com.educator.eduo.auth.model.entity.User;
 import com.educator.eduo.auth.model.mapper.TokenMapper;
@@ -10,7 +11,6 @@ import com.educator.eduo.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -40,7 +40,19 @@ public class UserServiceImpl implements UserService{
         return tokenProvider.createJwtResponse(authentication, newToken);
     }
 
-
+    @Override
+    @Transactional
+    public JwtResponse oauthLogin(OAuthLoginDto oAuthLoginDto) {
+        User user = userMapper.selectUserByUserId(oAuthLoginDto.getUserId()).orElse(null);
+        if(user != null) {
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    oAuthLoginDto.getUserId(), "", user.getAuthorities()
+            );
+            Token newToken = registerOrUpdateJwtToken(authentication);
+            return tokenProvider.createJwtResponse(authentication, newToken);
+        }
+        return null;
+    }
 
     private Authentication saveAuthentication(LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
