@@ -37,19 +37,10 @@ public class UserServiceImpl implements UserService{
         logger.info("Login Target: {}", loginDto);
         Authentication authentication = saveAuthentication(loginDto);
         Token newToken = registerOrUpdateJwtToken(authentication);
-        return createJwtResponse(authentication, newToken);
+        return tokenProvider.createJwtResponse(authentication, newToken);
     }
 
-    @Override
-    @Transactional
-    public JwtResponse reissueAccessToken(String refreshToken) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String newAccessToken = tokenProvider.createAccessToken(authentication);
-        Token token = new Token(authentication.getName(), newAccessToken, refreshToken);
 
-        tokenMapper.updateTokenByUserId(token);
-        return createJwtResponse(authentication, token);
-    }
 
     private Authentication saveAuthentication(LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
@@ -76,15 +67,5 @@ public class UserServiceImpl implements UserService{
 
         return newToken;
     }
-    private JwtResponse createJwtResponse(Authentication authentication, Token token) {
-        User user = (User) authentication.getPrincipal();
 
-        return JwtResponse.builder()
-                .accessToken(token.getAccessToken())
-                .refreshToken(token.getRefreshToken())
-                .userId(user.getUserId())
-                .name(user.getName())
-                .role(user.getRole())
-                .build();
-    }
 }

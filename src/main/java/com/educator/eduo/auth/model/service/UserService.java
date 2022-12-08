@@ -6,5 +6,5 @@ import com.educator.eduo.auth.model.dto.LoginDto;
 public interface UserService {
     JwtResponse authenticate(LoginDto loginDto);
 
-    JwtResponse reissueAccessToken(String refreshToken);
+
 }
