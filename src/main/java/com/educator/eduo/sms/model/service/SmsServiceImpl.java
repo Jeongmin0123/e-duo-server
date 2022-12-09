@@ -7,7 +7,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -19,22 +18,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@RequiredArgsConstructor
+@Service
 public class SmsServiceImpl implements SmsService {
 
-    @Value("${naver.sens.url}")
-    private final String REQUEST_URL;
+    private final String requestUrl;
+    private final String signingUri;
+    private final String accessKey;
+    private final String secretKey;
 
-    @Value("${naver.sens.uri}")
-    private final String SIGNING_URI;
-
-    @Value("${naver.sens.access-key}")
-    private final String ACCESS_KEY;
-
-    @Value("${naver.sens.secret-key}")
-    private final String SECRET_KEY;
+    public SmsServiceImpl(
+            @Value("${naver.sens.url}") String requestUrl,
+            @Value("${naver.sens.uri}") String signingUri,
+            @Value("${naver.sens.access-key}") String accessKey,
+            @Value("${naver.sens.secret-key}") String secretKey
+    ) {
+        this.requestUrl = requestUrl;
+        this.signingUri = signingUri;
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
+    }
 
     @Override
     public void requestSmsToNaver(SmsRequestDto smsRequestDto, String timestamp)
@@ -43,7 +48,7 @@ public class SmsServiceImpl implements SmsService {
         RestTemplate restTemplate = generateRestTemplate();
 
         HttpEntity<String> request = new HttpEntity<>(smsRequestDto.toJson(), headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(REQUEST_URL, request, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(requestUrl, request, String.class);
 
         if (response.getStatusCode() != HttpStatus.ACCEPTED) {
             throw new RuntimeException("문자 전송을 실패했습니다.");
@@ -54,8 +59,8 @@ public class SmsServiceImpl implements SmsService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("x-ncp-apigw-timestamp", timestamp);
-        headers.set("x-ncp-iam-access-key", ACCESS_KEY);
-        headers.set("x-ncp-apigw-signature-v2", makeSignature(HttpMethod.POST.name(), SIGNING_URI, timestamp, ACCESS_KEY, SECRET_KEY));
+        headers.set("x-ncp-iam-access-key", accessKey);
+        headers.set("x-ncp-apigw-signature-v2", makeSignature(HttpMethod.POST.name(), signingUri, timestamp, accessKey, secretKey));
         return headers;
     }
 
