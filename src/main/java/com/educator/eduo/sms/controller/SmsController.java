@@ -14,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 @RequiredArgsConstructor
 public class SmsController {
 
@@ -26,8 +28,10 @@ public class SmsController {
         String to = numberMap.get("phone");
         String smsAuthCode = NumberGenerator.generateRandomUniqueNumber(6);
         Message sms = new Message(to, String.format("[Eduo] 인증번호는 %s입니다.", smsAuthCode));
+
         SmsRequestDto smsRequestDto = new SmsRequestDto("SMS", sms);
         smsService.requestSmsToNaver(smsRequestDto, String.valueOf(System.currentTimeMillis()));
+
         return new ResponseEntity<>(smsAuthCode, HttpStatus.OK);
     }
 
