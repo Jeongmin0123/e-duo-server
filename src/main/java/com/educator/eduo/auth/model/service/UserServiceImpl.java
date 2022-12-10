@@ -2,7 +2,11 @@ package com.educator.eduo.auth.model.service;
 
 import com.educator.eduo.auth.model.dto.JwtResponse;
 import com.educator.eduo.auth.model.dto.LoginDto;
+import com.educator.eduo.auth.model.entity.Assistant;
+import com.educator.eduo.auth.model.entity.Student;
+import com.educator.eduo.auth.model.entity.Teacher;
 import com.educator.eduo.auth.model.entity.Token;
+import com.educator.eduo.auth.model.entity.User;
 import com.educator.eduo.auth.model.mapper.TokenMapper;
 import com.educator.eduo.auth.model.mapper.UserMapper;
 import com.educator.eduo.security.TokenProvider;
@@ -10,6 +14,7 @@ import com.educator.eduo.util.HttpUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -24,6 +29,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public JwtResponse getUserInfoUsingKakao(String accessTokenByKakao) throws JsonProcessingException {
+    public Object getUserInfoUsingKakao(String accessTokenByKakao) throws JsonProcessingException {
         HttpHeaders headers = HttpUtil.generateHttpHeadersForJWT(accessTokenByKakao);
         RestTemplate restTemplate = HttpUtil.generateRestTemplate();
 
@@ -83,7 +89,13 @@ public class UserServiceImpl implements UserService {
                                     .userId(userId)
                                     .password(passwordEncoder.encode(pseudoPassword))
                                     .build();
-        return authenticate(loginDto);
+
+        try {
+            return oauthLogin(loginDto);
+        } catch (UsernameNotFoundException e) {
+            logger.info(e.getMessage());
+            return loginDto;
+        }
     }
 
     @Override
@@ -124,6 +136,18 @@ public class UserServiceImpl implements UserService {
         }
 
         return newToken;
+    }
+
+    private JwtResponse oauthLogin(LoginDto loginDto) {
+        User user = userMapper.loadUserByUsername(loginDto.getUserId())
+                              .orElseThrow(() -> new UsernameNotFoundException(loginDto.getUserId() + "는 회원이 아닙니다."));
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                user, "", user.getAuthorities()
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        Token newToken = registerOrUpdateJwtToken(authentication);
+        return tokenProvider.createJwtResponse(authentication, newToken);
     }
 
     private int insertMultiUserInfo(Map<String, Object> params) {

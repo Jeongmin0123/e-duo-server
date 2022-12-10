@@ -5,6 +5,7 @@ import com.educator.eduo.auth.model.dto.LoginDto;
 import com.educator.eduo.auth.model.service.TokenService;
 import com.educator.eduo.auth.model.service.UserService;
 import com.educator.eduo.security.TokenProvider;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -56,10 +57,19 @@ public class AuthController {
     }
 
     @PostMapping("/auth/oauthlogin")
-    public ResponseEntity<?> kakaoLogin(@RequestBody Map<String, String> access) throws Exception{
+    public ResponseEntity<?> kakaoLogin(@RequestBody Map<String, String> access) throws JsonProcessingException {
         String accessTokenByKakao = access.get("accessToken");
-        JwtResponse jwtResponse = userService.getUserInfoUsingKakao(accessTokenByKakao);
-        return ResponseEntity.ok(jwtResponse);
+        Object userInfo = userService.getUserInfoUsingKakao(accessTokenByKakao);
+
+        if (userInfo instanceof JwtResponse) {
+            return ResponseEntity.ok(userInfo);
+        }
+
+        if (userInfo instanceof LoginDto) {
+            return new ResponseEntity<>(userInfo, HttpStatus.BAD_REQUEST);
+        }
+
+        throw new RuntimeException("이 코드는 실행될 수 없습니다.");
     }
 
     @PostMapping("/auth/signup")

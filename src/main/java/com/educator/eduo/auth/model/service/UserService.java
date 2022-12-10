@@ -9,7 +9,7 @@ public interface UserService {
 
     JwtResponse authenticate(LoginDto loginDto);
 
-    JwtResponse getUserInfoUsingKakao(String accessTokenByKakao) throws JsonProcessingException;
+    Object getUserInfoUsingKakao(String accessTokenByKakao) throws JsonProcessingException;
 
     int registerUser(Map<String, Object> params);
 
