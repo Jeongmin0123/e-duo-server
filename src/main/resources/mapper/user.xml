@@ -19,7 +19,7 @@
 	</resultMap>
 
 	<select id="selectUserByUserId" parameterType="string" resultMap="userResultMap">
-		SELECT user_id, password, name, domain, phone, activated, role, register_date
+		SELECT user_id, password, name, phone, activated, role, register_date
 		FROM user
 		WHERE user_id = #{ userId }
 	</select>
