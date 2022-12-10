@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +22,8 @@ public class SmsController {
     private final SmsService smsService;
 
     @PostMapping("/auth/phone")
-    public ResponseEntity<?> sendPhoneAuthCode(@RequestBody Map<String, String> numberMap)
+    public ResponseEntity<?> sendPhoneAuthCode(@RequestBody String to)
             throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
-        String to = numberMap.get("phone");
         String smsAuthCode = NumberGenerator.generateRandomUniqueNumber(6);
         Message sms = new Message(to, String.format("[Eduo] 인증번호는 %s입니다.", smsAuthCode));
 
