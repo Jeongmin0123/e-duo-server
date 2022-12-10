@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public JwtResponse oauthLogin(OAuthLoginDto oAuthLoginDto) {
-        User user = userMapper.selectUserByUserId(oAuthLoginDto.getUserId()).orElse(null);
+        User user = userMapper.selectUserByEmail(oAuthLoginDto.getEmail()).orElse(null);
         if(user != null) {
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     oAuthLoginDto.getUserId(), "", user.getAuthorities()
