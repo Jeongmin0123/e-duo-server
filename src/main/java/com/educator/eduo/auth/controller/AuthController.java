@@ -114,4 +114,16 @@ public class AuthController {
         if(jwtResponse == null) return new ResponseEntity<>(oAuthLoginDto, HttpStatus.BAD_REQUEST);
         return ResponseEntity.ok(jwtResponse);
     }
+
+    @PostMapping("/auth/signup")
+    public ResponseEntity<?> signup(@RequestBody Map<String, Object> params) {
+        int result = userService.registerUser(params);
+        logger.info("register user result : {}", result);
+        if(result == 1) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else if (result == -1) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 }
