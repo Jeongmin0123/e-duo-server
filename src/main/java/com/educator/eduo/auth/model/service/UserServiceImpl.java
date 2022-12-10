@@ -86,11 +86,25 @@ public class UserServiceImpl implements UserService {
         return authenticate(loginDto);
     }
 
+    @Override
+    @Transactional
+    public int registerUser(Map<String, Object> params) {
+        // 1. userId@domain 으로 아이디 중복 검사
+        String userId= (String) params.get("userId");
+        if(userMapper.selectUserByEmail(userId).isPresent()) return -1;
+
+        // 2. ObjectMapper -> 맞는 VO로 변환 후 user 테이블과 role에 맞는 테이블에 정보 입력
+        int result = insertMultiUserInfo(params);
+
+
+        return result;
+    }
+
     private Authentication saveAuthentication(LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginDto.getUserId(), loginDto.getPassword()
         );
-
+        logger.info("로그인 성공");
         // 메서드 authenticate()에서 UserDetailsServiceImpl의 loadUserByUserName을 호출하고, 최종적으로 Authentication을 만들어준다.
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -112,4 +126,29 @@ public class UserServiceImpl implements UserService {
         return newToken;
     }
 
+    private int insertMultiUserInfo(Map<String, Object> params) {
+        int result = 0;
+        ObjectMapper objectMapper = new ObjectMapper();
+        String roleType = (String) params.get("role");
+        if(roleType.equals("ROLE_TEACHER")) {
+            Teacher teacher = objectMapper.convertValue(params, Teacher.class);
+            logger.info("Teacher : {}\tuserId : {}", teacher, teacher.getUserId());
+            teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
+            userMapper.insertUser(teacher);
+            result = userMapper.insertTeacher(teacher);
+        } else if (roleType.equals("ROLE_ASSISTANT")) {
+            Assistant assistant = objectMapper.convertValue(params, Assistant.class);
+            logger.info("Assistant : {}\tuserId : {}", assistant, assistant.getUserId());
+            assistant.setPassword(passwordEncoder.encode(assistant.getPassword()));
+            userMapper.insertUser(assistant);
+            result = userMapper.insertAssistant(assistant);
+        } else if (roleType.equals("ROLE_STUDENT")) {
+            Student student = objectMapper.convertValue(params, Student.class);
+            logger.info("Student : {}\tuserId : {}", student, student.getUserId());
+            student.setPassword(passwordEncoder.encode(student.getPassword()));
+            userMapper.insertUser(student);
+            result = userMapper.insertStudent(student);
+        }
+        return result;
+    }
 }

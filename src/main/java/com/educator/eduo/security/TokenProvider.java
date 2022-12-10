@@ -45,8 +45,8 @@ public class TokenProvider implements InitializingBean {
             @Value("${jwt.refreshtoken-validity-in-seconds}") long refreshTokenValidityInMilliSeconds
     ) {
         this.secret = secret;
-        this.accessTokenValidityInMilliSeconds = accessTokenValidityInMilliSeconds;
-        this.refreshTokenValidityInMilliSeconds = refreshTokenValidityInMilliSeconds;
+        this.accessTokenValidityInMilliSeconds = accessTokenValidityInMilliSeconds*1000;
+        this.refreshTokenValidityInMilliSeconds = refreshTokenValidityInMilliSeconds*1000;
     }
 
     @Override
@@ -73,6 +73,7 @@ public class TokenProvider implements InitializingBean {
 
     public boolean validateToken(String token) {
         try {
+            logger.info("Validation Check Token : {}", token);
             getClaims(token);
             return true;
         } catch (SecurityException | MalformedJwtException e) {

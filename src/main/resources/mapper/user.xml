@@ -11,7 +11,6 @@
 		<id column="user_id" property="userId"/>
 		<result column="password" property="password"/>
 		<result column="name" property="name"/>
-		<result column="domain" property="domain"/>
 		<result column="phone" property="phone"/>
 		<result column="activated" property="activated"/>
 		<result column="role" property="role"/>
@@ -23,7 +22,33 @@
 		FROM user
 		WHERE user_id = #{ userId }
 	</select>
-	
+
+	<select id="loadUserByUsername" parameterType="map" resultMap="userResultMap">
+		SELECT user_id, password, name, activated, role
+		FROM user
+		WHERE user_id = #{ userId }
+	</select>
+
+	<insert id="insertUser" parameterType="User">
+		INSERT INTO user (user_id, password, name, phone, role)
+		VALUES (#{ userId }, #{ password }, #{ name }, #{ phone }, #{ role })
+	</insert>
+
+	<insert id="insertTeacher" parameterType="Teacher">
+		INSERT INTO teacher (user_id, subject, image_src)
+		VALUES (#{ userId }, #{ subject }, #{ imageSrc })
+	</insert>
+
+	<insert id="insertAssistant" parameterType="Assistant">
+		INSERT INTO assistant (user_id, teacher_user_id)
+		VALUES (#{ userId }, #{ teacherUserId })
+	</insert>
+
+	<insert id="insertStudent" parameterType="Student">
+		INSERT INTO STUDENT(user_id, birth_date, school_name, grade, parent, parent_phone)
+		VALUES(#{userId}, #{birthDate}, #{schoolName}, #{grade}, #{parent}, #{parentPhone})
+	</insert>
+
 <!--	<select id="existsByUsername" parameterType="string"-->
 <!--		resultType="int">-->
 <!--		select count(username)-->

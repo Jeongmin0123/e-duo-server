@@ -2,6 +2,9 @@ package com.educator.eduo.auth.model.service;
 
 import com.educator.eduo.auth.model.mapper.UserMapper;
 import com.educator.eduo.auth.model.entity.User;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +23,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        User user = userMapper.selectUserByUserId(userId)
-                              .orElseThrow(() -> new UsernameNotFoundException(userId + "를 DB에서 찾을 수 없습니다."));
+        User user = userMapper.loadUserByUsername(userId)
+                              .orElseThrow(() -> new UsernameNotFoundException(userId  + "를 DB에서 찾을 수 없습니다."));
 
         logger.info("loadUserByUsername => {}", user);
         logger.info("authorities: {}", user.getAuthorities());

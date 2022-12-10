@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,8 +48,9 @@ public class AuthController {
         return ResponseEntity.ok(jwtResponse);
     }
 
-    @GetMapping("/api/logout")
+    @PostMapping("/api/logout")
     public ResponseEntity<?> logout() {
+        logger.info("[LOGOUT]");
         SecurityContextHolder.clearContext();
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -60,5 +60,17 @@ public class AuthController {
         String accessTokenByKakao = access.get("accessToken");
         JwtResponse jwtResponse = userService.getUserInfoUsingKakao(accessTokenByKakao);
         return ResponseEntity.ok(jwtResponse);
+    }
+
+    @PostMapping("/auth/signup")
+    public ResponseEntity<?> signup(@RequestBody Map<String, Object> params) {
+        int result = userService.registerUser(params);
+        logger.info("register user result : {}", result);
+        if(result == 1) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else if (result == -1) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }
