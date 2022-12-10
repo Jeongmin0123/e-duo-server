@@ -100,16 +100,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public int registerUser(Map<String, Object> params) {
+    public Object registerUser(Map<String, Object> params) {
         // 1. userId@domain 으로 아이디 중복 검사
         String userId= (String) params.get("userId");
-        if(userMapper.selectUserByEmail(userId).isPresent()) return -1;
+        if(userMapper.existsByUserId(userId)) return Integer.valueOf(-1);
 
         // 2. ObjectMapper -> 맞는 VO로 변환 후 user 테이블과 role에 맞는 테이블에 정보 입력
-        int result = insertMultiUserInfo(params);
+        return insertMultiUserInfo(params);
 
-
-        return result;
     }
 
     private Authentication saveAuthentication(LoginDto loginDto) {
@@ -138,10 +136,7 @@ public class UserServiceImpl implements UserService {
         return newToken;
     }
 
-    private JwtResponse oauthLogin(LoginDto loginDto) {
-        User user = userMapper.loadUserByUsername(loginDto.getUserId())
-                              .orElseThrow(() -> new UsernameNotFoundException(loginDto.getUserId() + "는 회원이 아닙니다."));
-
+    private JwtResponse saveDirectAuthentication(User user) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 user, "", user.getAuthorities()
         );
@@ -150,29 +145,41 @@ public class UserServiceImpl implements UserService {
         return tokenProvider.createJwtResponse(authentication, newToken);
     }
 
-    private int insertMultiUserInfo(Map<String, Object> params) {
-        int result = 0;
+    private JwtResponse oauthLogin(LoginDto loginDto) {
+        User user = userMapper.loadUserByUsername(loginDto.getUserId())
+                              .orElseThrow(() -> new UsernameNotFoundException(loginDto.getUserId() + "는 회원이 아닙니다."));
+
+        return saveDirectAuthentication(user);
+    }
+
+
+
+    private Object insertMultiUserInfo(Map<String, Object> params) {
         ObjectMapper objectMapper = new ObjectMapper();
         String roleType = (String) params.get("role");
+        String userId = (String) params.get("userId");
         if(roleType.equals("ROLE_TEACHER")) {
             Teacher teacher = objectMapper.convertValue(params, Teacher.class);
             logger.info("Teacher : {}\tuserId : {}", teacher, teacher.getUserId());
             teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
             userMapper.insertUser(teacher);
-            result = userMapper.insertTeacher(teacher);
+            userMapper.insertTeacher(teacher);
         } else if (roleType.equals("ROLE_ASSISTANT")) {
             Assistant assistant = objectMapper.convertValue(params, Assistant.class);
             logger.info("Assistant : {}\tuserId : {}", assistant, assistant.getUserId());
             assistant.setPassword(passwordEncoder.encode(assistant.getPassword()));
             userMapper.insertUser(assistant);
-            result = userMapper.insertAssistant(assistant);
+            userMapper.insertAssistant(assistant);
         } else if (roleType.equals("ROLE_STUDENT")) {
             Student student = objectMapper.convertValue(params, Student.class);
             logger.info("Student : {}\tuserId : {}", student, student.getUserId());
             student.setPassword(passwordEncoder.encode(student.getPassword()));
             userMapper.insertUser(student);
-            result = userMapper.insertStudent(student);
+            userMapper.insertStudent(student);
         }
-        return result;
+
+        User user = userMapper.loadUserByUsername(userId).orElse(null);
+        if(user == null) return Integer.valueOf(0);
+        return saveDirectAuthentication(user);
     }
 }
