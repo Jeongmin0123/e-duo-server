@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,7 @@ public class UserServiceImpl implements UserService{
     private final TokenMapper tokenMapper;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -104,14 +106,20 @@ public class UserServiceImpl implements UserService{
         String roleType = (String) params.get("role");
         if(roleType.equals("ROLE_TEACHER")) {
             Teacher teacher = objectMapper.convertValue(params, Teacher.class);
+            logger.info("Teacher : {}\tuserId : {}", teacher, teacher.getUserId());
+            teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
             userMapper.insertUser(teacher);
             result = userMapper.insertTeacher(teacher);
         } else if (roleType.equals("ROLE_ASSISTANT")) {
             Assistant assistant = objectMapper.convertValue(params, Assistant.class);
+            logger.info("Assistant : {}\tuserId : {}", assistant, assistant.getUserId());
+            assistant.setPassword(passwordEncoder.encode(assistant.getPassword()));
             userMapper.insertUser(assistant);
             result = userMapper.insertAssistant(assistant);
         } else if (roleType.equals("ROLE_STUDENT")) {
             Student student = objectMapper.convertValue(params, Student.class);
+            logger.info("Student : {}\tuserId : {}", student, student.getUserId());
+            student.setPassword(passwordEncoder.encode(student.getPassword()));
             userMapper.insertUser(student);
             result = userMapper.insertStudent(student);
         }
