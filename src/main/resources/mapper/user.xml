@@ -11,7 +11,6 @@
 		<id column="user_id" property="userId"/>
 		<result column="password" property="password"/>
 		<result column="name" property="name"/>
-		<result column="domain" property="domain"/>
 		<result column="phone" property="phone"/>
 		<result column="activated" property="activated"/>
 		<result column="role" property="role"/>
@@ -19,15 +18,20 @@
 	</resultMap>
 
 	<select id="selectUserByEmail" parameterType="map" resultMap="userResultMap">
-		SELECT user_id, password, name, domain, phone, activated, role, register_date
+		SELECT user_id, password, name, phone, activated, role, register_date
 		FROM user
 		WHERE user_id = #{ userId }
-			AND domain = #{ domain }
+	</select>
+
+	<select id="loadUserByUsername" parameterType="map" resultMap="userResultMap">
+		SELECT user_id, password, name, activated, role
+		FROM user
+		WHERE user_id = #{ userId }
 	</select>
 
 	<insert id="insertUser" parameterType="User">
-		INSERT INTO USER(user_id, password, name, domain, phone, activated, role)
-		VALUES(#{userId}, #{password}, #{name}, #{domain}, #{phone}, 1, #{role})
+		INSERT INTO USER(user_id, password, name, phone, role)
+		VALUES(#{userId}, #{password}, #{name}, #{phone}, #{role})
 	</insert>
 
 	<insert id="insertTeacher" parameterType="Teacher">

@@ -2,7 +2,6 @@ package com.educator.eduo.auth.controller;
 
 import com.educator.eduo.auth.model.dto.JwtResponse;
 import com.educator.eduo.auth.model.dto.LoginDto;
-import com.educator.eduo.auth.model.dto.OAuthLoginDto;
 import com.educator.eduo.auth.model.service.TokenService;
 import com.educator.eduo.auth.model.service.UserService;
 import com.educator.eduo.security.TokenProvider;
@@ -25,7 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,8 +63,9 @@ public class AuthController {
         return ResponseEntity.ok(jwtResponse);
     }
 
-    @GetMapping("/api/logout")
+    @PostMapping("/api/logout")
     public ResponseEntity<?> logout() {
+        logger.info("[LOGOUT]");
         SecurityContextHolder.clearContext();
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -101,17 +100,22 @@ public class AuthController {
 //            String name = new ObjectMapper().writeValueAsString(node.get("properties").get("nickname"));
         String email = new ObjectMapper().writeValueAsString(node.get("kakao_account").get("email"));
         logger.info("email : {}", email); // oasdbd@laskdn.consal
-        String[] temp = email.trim().split("@");
-        String userId = temp[0];
-        String domain = temp[1];
+//        String[] temp = email.trim().split("@");
+//        String userId = temp[0];
+//        String domain = temp[1];
         String uuid = UUID.randomUUID().toString();
-        OAuthLoginDto oAuthLoginDto = OAuthLoginDto.builder()
-                .userId(userId)
+//        OAuthLoginDto oAuthLoginDto = OAuthLoginDto.builder()
+//                .userId(email)
+//                .password(passwordEncoder.encode(uuid))
+//                .domain(domain)
+//                .build();
+        LoginDto loginDto = LoginDto.builder()
+                .userId(email)
                 .password(passwordEncoder.encode(uuid))
-                .domain(domain)
                 .build();
-        JwtResponse jwtResponse = userService.oauthLogin(oAuthLoginDto);
-        if(jwtResponse == null) return new ResponseEntity<>(oAuthLoginDto, HttpStatus.BAD_REQUEST);
+        JwtResponse jwtResponse = userService.oauthLogin(loginDto);
+        loginDto.setPassword(""); // return 시 비밀번호 제거
+        if(jwtResponse == null) return new ResponseEntity<>(loginDto, HttpStatus.BAD_REQUEST);
         return ResponseEntity.ok(jwtResponse);
     }
 
