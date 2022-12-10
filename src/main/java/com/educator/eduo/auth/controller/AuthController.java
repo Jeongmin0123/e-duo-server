@@ -2,6 +2,7 @@ package com.educator.eduo.auth.controller;
 
 import com.educator.eduo.auth.model.dto.JwtResponse;
 import com.educator.eduo.auth.model.dto.LoginDto;
+import com.educator.eduo.auth.model.entity.Teacher;
 import com.educator.eduo.auth.model.service.TokenService;
 import com.educator.eduo.auth.model.service.UserService;
 import com.educator.eduo.security.TokenProvider;
@@ -13,11 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
@@ -83,4 +82,5 @@ public class AuthController {
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
 }
