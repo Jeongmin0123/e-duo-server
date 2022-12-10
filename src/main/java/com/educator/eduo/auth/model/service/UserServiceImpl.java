@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService{
 
     private Authentication saveAuthentication(LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                loginDto.getUserId(), loginDto.getPassword()
+                loginDto.getUserId()+"@"+loginDto.getEmail(), loginDto.getPassword()
         );
 
         // 메서드 authenticate()에서 UserDetailsServiceImpl의 loadUserByUserName을 호출하고, 최종적으로 Authentication을 만들어준다.
