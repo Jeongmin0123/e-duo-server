@@ -3,11 +3,11 @@ package com.educator.eduo.auth.model.service;
 import com.educator.eduo.auth.model.dto.JwtResponse;
 import com.educator.eduo.auth.model.dto.LoginDto;
 import com.educator.eduo.auth.model.dto.OAuthLoginDto;
-import com.educator.eduo.auth.model.entity.Token;
-import com.educator.eduo.auth.model.entity.User;
+import com.educator.eduo.auth.model.entity.*;
 import com.educator.eduo.auth.model.mapper.TokenMapper;
 import com.educator.eduo.auth.model.mapper.UserMapper;
 import com.educator.eduo.security.TokenProvider;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,15 +57,19 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public int registerUser(Map<String, Object> params) {
         // 1. userId@domain 으로 아이디 중복 검사
         Map<String, String> userMap = new HashMap<>();
         userMap.put("userId", (String) params.get("userId"));
         userMap.put("domain", (String) params.get("domain"));
-        if(userMapper.selectUserByUserId(userMap) != 0) return -1;
+        if(userMapper.selectUserByEmail(userMap).isPresent()) return -1;
 
         // 2. ObjectMapper -> 맞는 VO로 변환 후 user 테이블과 role에 맞는 테이블에 정보 입력
-        return 0;
+        int result = insertMultiUserInfo(params);
+
+
+        return result;
     }
 
     private Authentication saveAuthentication(LoginDto loginDto) {
@@ -94,4 +98,23 @@ public class UserServiceImpl implements UserService{
         return newToken;
     }
 
+    private int insertMultiUserInfo(Map<String, Object> params) {
+        int result = 0;
+        ObjectMapper objectMapper = new ObjectMapper();
+        String roleType = (String) params.get("role");
+        if(roleType.equals("ROLE_TEACHER")) {
+            Teacher teacher = objectMapper.convertValue(params, Teacher.class);
+            userMapper.insertUser(teacher);
+            result = userMapper.insertTeacher(teacher);
+        } else if (roleType.equals("ROLE_ASSISTANT")) {
+            Assistant assistant = objectMapper.convertValue(params, Assistant.class);
+            userMapper.insertUser(assistant);
+            result = userMapper.insertAssistant(assistant);
+        } else if (roleType.equals("ROLE_STUDENT")) {
+            Student student = objectMapper.convertValue(params, Student.class);
+            userMapper.insertUser(student);
+            result = userMapper.insertStudent(student);
+        }
+        return result;
+    }
 }
