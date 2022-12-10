@@ -17,7 +17,7 @@
 		<result column="register_date" property="registerDate"/>
 	</resultMap>
 
-	<select id="selectUserByEmail" parameterType="map" resultMap="userResultMap">
+	<select id="selectUserByUserId" parameterType="string" resultMap="userResultMap">
 		SELECT user_id, password, name, phone, activated, role, register_date
 		FROM user
 		WHERE user_id = #{ userId }
@@ -30,18 +30,18 @@
 	</select>
 
 	<insert id="insertUser" parameterType="User">
-		INSERT INTO USER(user_id, password, name, phone, role)
-		VALUES(#{userId}, #{password}, #{name}, #{phone}, #{role})
+		INSERT INTO user (user_id, password, name, phone, role)
+		VALUES (#{ userId }, #{ password }, #{ name }, #{ phone }, #{ role })
 	</insert>
 
 	<insert id="insertTeacher" parameterType="Teacher">
-		INSERT INTO TEACHER(user_id, subject, image_src)
-		VALUES(#{userId}, #{subject}, #{imageSrc})
+		INSERT INTO teacher (user_id, subject, image_src)
+		VALUES (#{ userId }, #{ subject }, #{ imageSrc })
 	</insert>
 
 	<insert id="insertAssistant" parameterType="Assistant">
-		INSERT INTO ASSISTANT(user_id, teacher_user_id)
-		VALUES(#{userId}, #{teacherUserId})
+		INSERT INTO assistant (user_id, teacher_user_id)
+		VALUES (#{ userId }, #{ teacherUserId })
 	</insert>
 
 	<insert id="insertStudent" parameterType="Student">

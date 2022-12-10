@@ -8,7 +8,7 @@ import java.security.NoSuchAlgorithmException;
 
 public interface SmsService {
 
-    void requestSmsToNaver(SmsRequestDto smsRequestDto, String timestamp)
+    void sendPhoneAuthCode(SmsRequestDto smsRequestDto, String timestamp)
             throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException;
 
 }

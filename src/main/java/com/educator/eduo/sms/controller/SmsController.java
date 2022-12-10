@@ -23,14 +23,14 @@ public class SmsController {
     private final SmsService smsService;
 
     @PostMapping("/auth/phone")
-    public ResponseEntity<?> requestSmsToNaver(@RequestBody Map<String, String> numberMap)
+    public ResponseEntity<?> sendPhoneAuthCode(@RequestBody Map<String, String> numberMap)
             throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
         String to = numberMap.get("phone");
         String smsAuthCode = NumberGenerator.generateRandomUniqueNumber(6);
         Message sms = new Message(to, String.format("[Eduo] 인증번호는 %s입니다.", smsAuthCode));
 
         SmsRequestDto smsRequestDto = new SmsRequestDto("SMS", sms);
-        smsService.requestSmsToNaver(smsRequestDto, String.valueOf(System.currentTimeMillis()));
+        smsService.sendPhoneAuthCode(smsRequestDto, String.valueOf(System.currentTimeMillis()));
 
         return new ResponseEntity<>(smsAuthCode, HttpStatus.OK);
     }
