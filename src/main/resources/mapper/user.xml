@@ -18,10 +18,11 @@
 		<result column="register_date" property="registerDate"/>
 	</resultMap>
 
-	<select id="selectUserByUserId" parameterType="string" resultMap="userResultMap">
+	<select id="selectUserByEmail" parameterType="map" resultMap="userResultMap">
 		SELECT user_id, password, name, domain, phone, activated, role, register_date
 		FROM user
 		WHERE user_id = #{ userId }
+			AND domain = #{ domain }
 	</select>
 	
 <!--	<select id="existsByUsername" parameterType="string"-->
