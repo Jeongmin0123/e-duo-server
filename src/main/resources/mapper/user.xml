@@ -18,7 +18,7 @@
 	</resultMap>
 
 	<select id="selectUserByUserId" parameterType="string" resultMap="userResultMap">
-		SELECT user_id, password, name, phone, activated, role, register_date
+		SELECT user_id, name, phone, activated, role, register_date
 		FROM user
 		WHERE user_id = #{ userId }
 	</select>
@@ -27,6 +27,12 @@
 		SELECT user_id, password, name, activated, role
 		FROM user
 		WHERE user_id = #{ userId }
+	</select>
+
+	<select id="existsByUserId" parameterType="String" resultType="boolean">
+		SELECT IF(COUNT(*) = 1, 1, 0)
+		FROM user
+		WHERE user_id = #{userId}
 	</select>
 
 	<insert id="insertUser" parameterType="User">

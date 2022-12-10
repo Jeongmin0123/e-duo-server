@@ -11,6 +11,6 @@ public interface UserService {
 
     Object getUserInfoUsingKakao(String accessTokenByKakao) throws JsonProcessingException;
 
-    int registerUser(Map<String, Object> params);
+    Object registerUser(Map<String, Object> params);
 
 }
