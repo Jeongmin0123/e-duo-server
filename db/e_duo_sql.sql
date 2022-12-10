@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `e_duo`.`user` (
   `password` VARCHAR(300) NOT NULL,
   `name` VARCHAR(20) NOT NULL,
   `phone` VARCHAR(11) NOT NULL,
-  `activated` TINYINT(4) NULL DEFAULT 1,
+  `activated` TINYINT(4) DEFAULT 1,
   `role` ENUM('ROLE_TEACHER', 'ROLE_ASSISTANT', 'ROLE_STUDENT') NOT NULL,
   `register_date` timestamp default NOW(),
   PRIMARY KEY (`user_id`),

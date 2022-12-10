@@ -100,11 +100,11 @@ public class AuthController {
 
     @PostMapping("/auth/signup")
     public ResponseEntity<?> signup(@RequestBody Map<String, Object> params) {
-        int result = userService.registerUser(params);
+        Object result = userService.registerUser(params);
         logger.info("register user result : {}", result);
-        if (result == 1) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else if (result == -1) {
+        if(result instanceof JwtResponse) {
+            return ResponseEntity.ok(result);
+        } else if (result instanceof Integer && (int) result == -1) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

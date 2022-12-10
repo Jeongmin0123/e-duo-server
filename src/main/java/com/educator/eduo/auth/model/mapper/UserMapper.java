@@ -12,7 +12,10 @@ import java.util.Optional;
 @Mapper
 public interface UserMapper {
 
-    Optional<User> selectUserByEmail(String userId);
+    Optional<User> selectUserByUserId(String userId);
+    Optional<User> loadUserByUsername(String userId);
+
+    boolean existsByUserId(String userId);
 
     void insertUser(User user);
 
@@ -22,5 +25,4 @@ public interface UserMapper {
 
     int insertStudent(Student student);
 
-    Optional<User> loadUserByUsername(String userId);
 }
