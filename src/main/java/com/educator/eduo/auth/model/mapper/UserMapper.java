@@ -12,7 +12,7 @@ import java.util.Optional;
 @Mapper
 public interface UserMapper {
 
-    Optional<User> selectUserByEmail(Map<String, String> emailMap);
+    Optional<User> selectUserByEmail(String userId);
 
     void insertUser(User user);
 
@@ -21,4 +21,6 @@ public interface UserMapper {
     int insertAssistant(Assistant assistant);
 
     int insertStudent(Student student);
+
+    Optional<User> loadUserByUsername(String userId);
 }

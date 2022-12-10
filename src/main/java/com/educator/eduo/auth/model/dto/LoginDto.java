@@ -13,15 +13,6 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class LoginDto {
-
     private String userId;
-    private String domain;
     private String password;
-
-    public Map<String, String> getEmail() {
-        Map<String, String> emailMap = new HashMap<>();
-        emailMap.put("userId", userId);
-        emailMap.put("domain", domain);
-        return emailMap;
-    }
 }

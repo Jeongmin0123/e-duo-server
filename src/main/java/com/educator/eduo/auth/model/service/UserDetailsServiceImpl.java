@@ -23,13 +23,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        String[] email = userId.split("@");
-        Map<String, String> map = new HashMap<>();
-        map.put("userId", email[0]);
-        map.put("domain", email[1]);
-
-        User user = userMapper.selectUserByEmail(map)
-                              .orElseThrow(() -> new UsernameNotFoundException(userId + "를 DB에서 찾을 수 없습니다."));
+        User user = userMapper.loadUserByUsername(userId)
+                              .orElseThrow(() -> new UsernameNotFoundException(userId  + "를 DB에서 찾을 수 없습니다."));
 
         logger.info("loadUserByUsername => {}", user);
         logger.info("authorities: {}", user.getAuthorities());

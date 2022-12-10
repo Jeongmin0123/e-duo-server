@@ -2,7 +2,6 @@ package com.educator.eduo.auth.model.service;
 
 import com.educator.eduo.auth.model.dto.JwtResponse;
 import com.educator.eduo.auth.model.dto.LoginDto;
-import com.educator.eduo.auth.model.dto.OAuthLoginDto;
 import com.educator.eduo.auth.model.entity.*;
 import com.educator.eduo.auth.model.mapper.TokenMapper;
 import com.educator.eduo.auth.model.mapper.UserMapper;
@@ -19,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -46,12 +44,13 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public JwtResponse oauthLogin(OAuthLoginDto oAuthLoginDto) {
-        User user = userMapper.selectUserByEmail(oAuthLoginDto.getEmail()).orElse(null);
+    public JwtResponse oauthLogin(LoginDto loginDto) {
+        User user = userMapper.loadUserByUsername(loginDto.getUserId()).orElse(null);
         if(user != null) {
             Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    oAuthLoginDto.getUserId(), "", user.getAuthorities()
+                    user, "", user.getAuthorities()
             );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
             Token newToken = registerOrUpdateJwtToken(authentication);
             return tokenProvider.createJwtResponse(authentication, newToken);
         }
@@ -62,10 +61,8 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public int registerUser(Map<String, Object> params) {
         // 1. userId@domain 으로 아이디 중복 검사
-        Map<String, String> userMap = new HashMap<>();
-        userMap.put("userId", (String) params.get("userId"));
-        userMap.put("domain", (String) params.get("domain"));
-        if(userMapper.selectUserByEmail(userMap).isPresent()) return -1;
+        String userId= (String) params.get("userId");
+        if(userMapper.selectUserByEmail(userId).isPresent()) return -1;
 
         // 2. ObjectMapper -> 맞는 VO로 변환 후 user 테이블과 role에 맞는 테이블에 정보 입력
         int result = insertMultiUserInfo(params);
@@ -76,9 +73,9 @@ public class UserServiceImpl implements UserService{
 
     private Authentication saveAuthentication(LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                loginDto.getUserId()+"@"+loginDto.getEmail(), loginDto.getPassword()
+                loginDto.getUserId(), loginDto.getPassword()
         );
-
+        logger.info("로그인 성공");
         // 메서드 authenticate()에서 UserDetailsServiceImpl의 loadUserByUserName을 호출하고, 최종적으로 Authentication을 만들어준다.
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
