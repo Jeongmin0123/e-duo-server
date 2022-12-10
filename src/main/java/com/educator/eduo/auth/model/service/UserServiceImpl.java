@@ -18,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -52,6 +54,18 @@ public class UserServiceImpl implements UserService{
             return tokenProvider.createJwtResponse(authentication, newToken);
         }
         return null;
+    }
+
+    @Override
+    public int registerUser(Map<String, Object> params) {
+        // 1. userId@domain 으로 아이디 중복 검사
+        Map<String, String> userMap = new HashMap<>();
+        userMap.put("userId", (String) params.get("userId"));
+        userMap.put("domain", (String) params.get("domain"));
+        if(userMapper.selectUserByUserId(userMap) != 0) return -1;
+
+        // 2. ObjectMapper -> 맞는 VO로 변환 후 user 테이블과 role에 맞는 테이블에 정보 입력
+        return 0;
     }
 
     private Authentication saveAuthentication(LoginDto loginDto) {
