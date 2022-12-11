@@ -1,9 +1,8 @@
-package com.educator.eduo.auth.model.service;
+package com.educator.eduo.user.model.service;
 
-import com.educator.eduo.auth.model.dto.JwtResponse;
-import com.educator.eduo.auth.model.entity.Token;
-import com.educator.eduo.auth.model.mapper.TokenMapper;
-import java.util.Optional;
+import com.educator.eduo.user.model.dto.JwtResponse;
+import com.educator.eduo.user.model.entity.Token;
+import com.educator.eduo.user.model.mapper.TokenMapper;
 
 import com.educator.eduo.security.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;

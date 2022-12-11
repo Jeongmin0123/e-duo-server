@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.educator.eduo.auth.model.mapper.UserMapper">
+<mapper namespace="com.educator.eduo.user.model.mapper.UserMapper">
 
 <!--	<select id="listUser" resultType="User">-->
 <!--		select username,password,email,domain,role from user-->

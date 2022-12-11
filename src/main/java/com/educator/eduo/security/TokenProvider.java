@@ -1,8 +1,8 @@
 package com.educator.eduo.security;
 
-import com.educator.eduo.auth.model.dto.JwtResponse;
-import com.educator.eduo.auth.model.entity.Token;
-import com.educator.eduo.auth.model.entity.User;
+import com.educator.eduo.user.model.dto.JwtResponse;
+import com.educator.eduo.user.model.entity.Token;
+import com.educator.eduo.user.model.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -16,7 +16,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;

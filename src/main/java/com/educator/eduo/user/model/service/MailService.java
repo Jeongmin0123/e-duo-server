@@ -1,6 +1,6 @@
-package com.educator.eduo.auth.model.service;
+package com.educator.eduo.user.model.service;
 
-import com.educator.eduo.auth.model.dto.AuthMailDto;
+import com.educator.eduo.user.model.dto.AuthMailDto;
 import javax.mail.MessagingException;
 import org.springframework.mail.MailException;
 

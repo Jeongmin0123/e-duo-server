@@ -1,9 +1,10 @@
-package com.educator.eduo.auth.controller;
+package com.educator.eduo.user.controller;
 
-import com.educator.eduo.auth.model.entity.Assistant;
-import com.educator.eduo.auth.model.entity.Student;
-import com.educator.eduo.auth.model.entity.Teacher;
-import com.educator.eduo.auth.model.service.UserService;
+import com.educator.eduo.user.model.entity.Assistant;
+import com.educator.eduo.user.model.entity.Student;
+import com.educator.eduo.user.model.entity.Teacher;
+import com.educator.eduo.user.model.service.AuthService;
+import com.educator.eduo.user.model.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
