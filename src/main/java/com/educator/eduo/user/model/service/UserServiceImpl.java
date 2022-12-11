@@ -3,6 +3,7 @@ package com.educator.eduo.user.model.service;
 import com.educator.eduo.user.model.entity.Assistant;
 import com.educator.eduo.user.model.entity.Student;
 import com.educator.eduo.user.model.entity.Teacher;
+import com.educator.eduo.user.model.entity.User;
 import com.educator.eduo.user.model.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,15 @@ public class UserServiceImpl implements UserService{
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Override
+    @Transactional
+    public int updateUser(User user) {
+        User searchResult = userMapper.selectUserByUserId(user.getUserId()).orElse(null);
+
+        if(searchResult == null) return 0;
+        searchResult.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userMapper.updateUser(searchResult);
+    }
 
     @Override
     @Transactional

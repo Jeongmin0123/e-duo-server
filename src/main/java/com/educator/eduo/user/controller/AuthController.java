@@ -3,13 +3,16 @@ package com.educator.eduo.user.controller;
 import com.educator.eduo.user.model.dto.AuthMailDto;
 import com.educator.eduo.user.model.dto.JwtResponse;
 import com.educator.eduo.user.model.dto.LoginDto;
+import com.educator.eduo.user.model.entity.User;
 import com.educator.eduo.user.model.service.MailService;
 import com.educator.eduo.user.model.service.TokenService;
 import com.educator.eduo.user.model.service.AuthService;
 import com.educator.eduo.security.TokenProvider;
+import com.educator.eduo.user.model.service.UserService;
 import com.educator.eduo.util.NumberGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Map;
+import java.util.UUID;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -34,13 +37,15 @@ public class AuthController {
     private final AuthService authService;
     private final MailService mailService;
     private final TokenProvider tokenProvider;
+    private final UserService userService;
 
     @Autowired
-    public AuthController(TokenService tokenService, AuthService authService, MailService mailService, TokenProvider tokenProvider) {
+    public AuthController(TokenService tokenService, AuthService authService, MailService mailService, TokenProvider tokenProvider, UserService userService) {
         this.tokenService = tokenService;
         this.authService = authService;
         this.mailService = mailService;
         this.tokenProvider = tokenProvider;
+        this.userService = userService;
     }
 
     @PostMapping("/auth/login")
@@ -89,7 +94,7 @@ public class AuthController {
                     .to(userId)
                     .subject("[Eduo] 회원가입 이메일 인증 코드입니다.")
                     .build()
-                    .setContent(emailAuthCode);
+                    .setContentForAuthCode(emailAuthCode);
 
             mailService.sendEmailAuthCode(mailDto);
             return new ResponseEntity<>(emailAuthCode, HttpStatus.OK);
@@ -109,4 +114,25 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    @PostMapping("/auth/mypw")
+    public ResponseEntity<?> findPassword(@Value("${spring.mail.username}") String from, @RequestBody String userId)throws MessagingException {
+        String uuidPassword = UUID.randomUUID().toString().substring(18);
+        User user = User.builder()
+                .userId(userId)
+                .password(uuidPassword)
+                .build();
+        if(userService.updateUser(user) == 1) {
+            String emailAuthCode = NumberGenerator.generateRandomUniqueNumber(6);
+            AuthMailDto mailDto = AuthMailDto.builder()
+                    .from(from)
+                    .to(userId)
+                    .subject("[Eduo] 임시 비밀번호가 발급되었습니다.")
+                    .build()
+                    .setContentForPassword(uuidPassword);
+
+            mailService.sendEmailAuthCode(mailDto);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
 }
