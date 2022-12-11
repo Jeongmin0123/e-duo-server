@@ -94,6 +94,7 @@ public class AuthServiceImpl implements AuthService {
             return oauthLogin(loginDto);
         } catch (UsernameNotFoundException e) {
             logger.info(e.getMessage());
+            loginDto.setPassword("");
             return loginDto;
         }
     }
