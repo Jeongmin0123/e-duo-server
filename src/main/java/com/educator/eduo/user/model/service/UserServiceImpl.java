@@ -24,8 +24,6 @@ public class UserServiceImpl implements UserService{
         this.passwordEncoder = passwordEncoder;
     }
 
-    // >>>>>>>>>>>>>>>>>>>>>> UserService -> update
-
 
     @Override
     @Transactional
@@ -51,5 +49,4 @@ public class UserServiceImpl implements UserService{
         return userMapper.updateStudent(student);
     }
 
-    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
