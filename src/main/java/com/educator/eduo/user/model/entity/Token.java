@@ -1,18 +1,18 @@
-package com.educator.eduo.auth.model.dto;
+package com.educator.eduo.user.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class LoginDto {
+public class Token {
+
     private String userId;
-    private String password;
+    private String accessToken;
+    private String refreshToken;
+
 }

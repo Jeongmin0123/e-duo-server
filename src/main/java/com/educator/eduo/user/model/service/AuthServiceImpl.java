@@ -1,14 +1,14 @@
-package com.educator.eduo.auth.model.service;
+package com.educator.eduo.user.model.service;
 
-import com.educator.eduo.auth.model.dto.JwtResponse;
-import com.educator.eduo.auth.model.dto.LoginDto;
-import com.educator.eduo.auth.model.entity.Assistant;
-import com.educator.eduo.auth.model.entity.Student;
-import com.educator.eduo.auth.model.entity.Teacher;
-import com.educator.eduo.auth.model.entity.Token;
-import com.educator.eduo.auth.model.entity.User;
-import com.educator.eduo.auth.model.mapper.TokenMapper;
-import com.educator.eduo.auth.model.mapper.UserMapper;
+import com.educator.eduo.user.model.dto.JwtResponse;
+import com.educator.eduo.user.model.dto.LoginDto;
+import com.educator.eduo.user.model.entity.Assistant;
+import com.educator.eduo.user.model.entity.Student;
+import com.educator.eduo.user.model.entity.Teacher;
+import com.educator.eduo.user.model.entity.Token;
+import com.educator.eduo.user.model.entity.User;
+import com.educator.eduo.user.model.mapper.TokenMapper;
+import com.educator.eduo.user.model.mapper.UserMapper;
 import com.educator.eduo.security.TokenProvider;
 import com.educator.eduo.util.HttpUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class AuthServiceImpl implements AuthService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     private final String requestUrlForKakao;
 
     @Autowired
-    public UserServiceImpl(
+    public AuthServiceImpl(
             UserMapper userMapper,
             TokenMapper tokenMapper,
             AuthenticationManagerBuilder authenticationManagerBuilder,
@@ -113,29 +113,29 @@ public class UserServiceImpl implements UserService {
     // >>>>>>>>>>>>>>>>>>>>>> UserService -> update
 
 
-    @Override
-    @Transactional
-    public int updateTeacher(Teacher teacher) {
-        teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
-        userMapper.updateUser(teacher);
-        return userMapper.updateTeacher(teacher);
-    }
-
-    @Override
-    @Transactional
-    public int updateAssistant(Assistant assistant) {
-        assistant.setPassword(passwordEncoder.encode(assistant.getPassword()));
-        userMapper.updateUser(assistant);
-        return userMapper.updateAssistant(assistant);
-    }
-
-    @Override
-    @Transactional
-    public int updateStudent(Student student) {
-        student.setPassword(passwordEncoder.encode(student.getPassword()));
-        userMapper.updateUser(student);
-        return userMapper.updateStudent(student);
-    }
+//    @Override
+//    @Transactional
+//    public int updateTeacher(Teacher teacher) {
+//        teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
+//        userMapper.updateUser(teacher);
+//        return userMapper.updateTeacher(teacher);
+//    }
+//
+//    @Override
+//    @Transactional
+//    public int updateAssistant(Assistant assistant) {
+//        assistant.setPassword(passwordEncoder.encode(assistant.getPassword()));
+//        userMapper.updateUser(assistant);
+//        return userMapper.updateAssistant(assistant);
+//    }
+//
+//    @Override
+//    @Transactional
+//    public int updateStudent(Student student) {
+//        student.setPassword(passwordEncoder.encode(student.getPassword()));
+//        userMapper.updateUser(student);
+//        return userMapper.updateStudent(student);
+//    }
 
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

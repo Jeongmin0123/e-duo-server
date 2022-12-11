@@ -1,7 +1,6 @@
-package com.educator.eduo.auth.model.entity;
+package com.educator.eduo.user.model.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;

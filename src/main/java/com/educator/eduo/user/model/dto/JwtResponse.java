@@ -1,4 +1,4 @@
-package com.educator.eduo.auth.model.dto;
+package com.educator.eduo.user.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
