@@ -6,6 +6,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -14,10 +16,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService {
 
+    private final Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
     private final JavaMailSender mailSender;
 
     @Override
     public void sendEmailAuthCode(AuthMailDto mailDto) throws MessagingException, MailException {
+        logger.info("sendEmailAuthCode : {} ", mailDto);
         MimeMessage message = createMail(mailDto);
         mailSender.send(message);
     }
