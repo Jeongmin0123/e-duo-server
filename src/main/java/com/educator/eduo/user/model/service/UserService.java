@@ -14,6 +14,6 @@ public interface UserService {
 
     boolean updateStudent(Student student);
 
-    boolean updateUser(User user) throws UsernameNotFoundException;
+    void updatePassword(User user) throws UsernameNotFoundException;
 
 }

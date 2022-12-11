@@ -30,12 +30,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public boolean updateUser(User user) {
-        User searchResult = userMapper.selectUserByUserId(user.getUserId()).orElse(null);
+    public void updatePassword(User user) {
+        User selected = userMapper.selectUserByUserId(user.getUserId())
+                                  .orElseThrow(() -> new UsernameNotFoundException("회원 가입하지 않은 유저입니다."));
 
-        if(searchResult == null) return 0;
-        searchResult.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userMapper.updateUser(searchResult);
+        selected.setPassword(user.getPassword());
+        selected.encryptPassword(passwordEncoder);
+        userMapper.updateUser(selected);
     }
 
     @Override
