@@ -69,8 +69,8 @@ public class AuthController {
     }
 
     @PostMapping("/auth/oauthlogin")
-    public ResponseEntity<?> kakaoLogin(@RequestBody Map<String, String> access) throws JsonProcessingException {
-        String accessTokenByKakao = access.get("accessToken");
+    public ResponseEntity<?> kakaoLogin(HttpServletRequest request) throws JsonProcessingException {
+        String accessTokenByKakao = tokenProvider.resolveToken(request);
         Object userInfo = authService.getUserInfoUsingKakao(accessTokenByKakao);
 
         if (userInfo instanceof JwtResponse) {
