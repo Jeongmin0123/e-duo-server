@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SmsRequestDto {
 
-    private static final String DEFAULT_FROM = "하나 등록해두어야 함";
     private static final String DEFAULT_CONTENT = "[Eduo] SMS 전송을 실패하였습니다.";
 
     private String type;
@@ -21,9 +20,9 @@ public class SmsRequestDto {
     private String content;
     private List<Message> messages;
 
-    public SmsRequestDto(String type, Message message) {
+    public SmsRequestDto(String type, String from, Message message) {
         this.type = type;
-        this.from = DEFAULT_FROM;
+        this.from = from;
         this.content = DEFAULT_CONTENT;
         this.messages = new ArrayList<>();
         messages.add(message);
