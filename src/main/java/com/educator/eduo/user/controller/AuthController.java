@@ -12,6 +12,7 @@ import com.educator.eduo.user.model.service.UserService;
 import com.educator.eduo.util.NumberGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,11 +38,12 @@ public class AuthController {
     private final TokenService tokenService;
     private final AuthService authService;
     private final MailService mailService;
-    private final TokenProvider tokenProvider;
     private final UserService userService;
+    private final TokenProvider tokenProvider;
 
     @Autowired
-    public AuthController(TokenService tokenService, AuthService authService, MailService mailService, TokenProvider tokenProvider, UserService userService) {
+    public AuthController(TokenService tokenService, AuthService authService, MailService mailService, UserService userService,
+            TokenProvider tokenProvider) {
         this.tokenService = tokenService;
         this.authService = authService;
         this.mailService = mailService;
@@ -63,7 +66,7 @@ public class AuthController {
 
     @PostMapping("/api/logout")
     public ResponseEntity<?> logout() {
-        logger.info("[LOGOUT]");
+        logger.info("[LOGOUT] userId: {}", SecurityContextHolder.getContext().getAuthentication().getName());
         SecurityContextHolder.clearContext();
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -85,54 +88,55 @@ public class AuthController {
     }
 
     @PostMapping("/auth/email")
-    public ResponseEntity<?> emailValidCheck(@Value("${spring.mail.username}") String from, @RequestBody String userId)throws MessagingException {
+    public ResponseEntity<?> emailValidCheck(@Value("${spring.mail.username}") String from, @RequestBody String userId) throws MessagingException {
         logger.info("Our Domain : {} to User : {}", from, userId);
-        if(authService.isExistsUserId(userId)) {
+
+        if (!authService.isExistsUserId(userId)) {
             String emailAuthCode = NumberGenerator.generateRandomUniqueNumber(6);
             AuthMailDto mailDto = AuthMailDto.builder()
-                    .from(from)
-                    .to(userId)
-                    .subject("[Eduo] 회원가입 이메일 인증 코드입니다.")
-                    .build()
-                    .setContentForAuthCode(emailAuthCode);
+                                             .from(from)
+                                             .to(userId)
+                                             .subject("[Eduo] 회원가입 이메일 인증 코드입니다.")
+                                             .build()
+                                             .setContentForAuthCode(emailAuthCode);
 
             mailService.sendEmailAuthCode(mailDto);
             return new ResponseEntity<>(emailAuthCode, HttpStatus.OK);
         }
+
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<?> signup(@RequestBody Map<String, Object> params) {
-        Object result = authService.registerUser(params);
-        logger.info("register user result : {}", result);
-        if(result instanceof JwtResponse) {
-            return ResponseEntity.ok(result);
-        } else if (result instanceof Integer && (int) result == -1) {
+    public ResponseEntity<?> signup(@RequestBody Map<String, Object> params) throws IllegalArgumentException {
+        Optional<JwtResponse> result = authService.registerUser(params);
+        logger.info("result to register user: {}", result);
+
+        if (!result.isPresent()) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        return ResponseEntity.ok(result.get());
     }
 
     @PostMapping("/auth/mypw")
-    public ResponseEntity<?> findPassword(@Value("${spring.mail.username}") String from, @RequestBody String userId)throws MessagingException {
+    public ResponseEntity<?> findPassword(@Value("${spring.mail.username}") String from, @RequestBody String userId) throws UsernameNotFoundException, MessagingException {
         String uuidPassword = UUID.randomUUID().toString().substring(18);
         User user = User.builder()
-                .userId(userId)
-                .password(uuidPassword)
-                .build();
-        if(userService.updateUser(user) == 1) {
-            String emailAuthCode = NumberGenerator.generateRandomUniqueNumber(6);
-            AuthMailDto mailDto = AuthMailDto.builder()
-                    .from(from)
-                    .to(userId)
-                    .subject("[Eduo] 임시 비밀번호가 발급되었습니다.")
-                    .build()
-                    .setContentForPassword(uuidPassword);
+                        .userId(userId)
+                        .password(uuidPassword)
+                        .build();
+        userService.updatePassword(user);
 
-            mailService.sendEmailAuthCode(mailDto);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        AuthMailDto mailDto = AuthMailDto.builder()
+                                         .from(from)
+                                         .to(userId)
+                                         .subject("[Eduo] 임시 비밀번호가 발급되었습니다.")
+                                         .build()
+                                         .setContentForPassword(uuidPassword);
+        mailService.sendEmailAuthCode(mailDto);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

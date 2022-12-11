@@ -10,6 +10,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class Teacher extends User {
+
     private String subject;
     private String imageSrc;
+
 }

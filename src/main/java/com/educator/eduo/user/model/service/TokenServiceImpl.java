@@ -17,7 +17,6 @@ public class TokenServiceImpl implements TokenService {
     private final TokenProvider tokenProvider;
     private final TokenMapper tokenMapper;
 
-
     @Autowired
     public TokenServiceImpl(TokenProvider tokenProvider, TokenMapper tokenMapper) {
         this.tokenProvider = tokenProvider;

@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 @Data
@@ -18,10 +19,10 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 public class User implements UserDetails {
+
     private String userId;
     private String password;
     private String name;
-//    private String domain;
     private String phone;
     private int activated;
     private String role;
@@ -62,6 +63,10 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.activated == 1;
+    }
+
+    public void encryptPassword(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(this.password);
     }
 
 }
