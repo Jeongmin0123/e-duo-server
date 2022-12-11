@@ -25,4 +25,11 @@ public interface UserMapper {
 
     int insertStudent(Student student);
 
+    int updateUser(User user);
+
+    int updateTeacher(Teacher teacher);
+
+    int updateAssistant(Assistant assistant);
+
+    int updateStudent(Student student);
 }

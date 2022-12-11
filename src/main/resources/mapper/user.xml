@@ -55,6 +55,30 @@
 		VALUES(#{userId}, #{birthDate}, #{schoolName}, #{grade}, #{parent}, #{parentPhone})
 	</insert>
 
+	<update id="updateUser" parameterType="User">
+		UPDATE user
+		SET password=#{password}, name=#{name}, phone=#{phone}
+		WHERE user_id=#{userId}
+	</update>
+
+	<update id="updateTeacher" parameterType="Teacher">
+		UPDATE teacher
+		SET  subject=#{subject}, image_src=#{imageSrc}
+		WHERE user_id=#{userId}
+	</update>
+
+	<update id="updateAssistant" parameterType="Assistant">
+		UPDATE assistant
+		SET teacher_user_id=#{teacherUserId}
+		WHERE user_id=#{userId}
+	</update>
+
+	<update id="updateStudent" parameterType="Student">
+		UPDATE student
+		SET birth_date=#{birthDate}, school_name=#{schoolName}, grade=#{grade}, parent=#{parent}, parent_phone=#{parentPhone}
+		WHERE user_id=#{userId}
+	</update>
+
 <!--	<select id="existsByUsername" parameterType="string"-->
 <!--		resultType="int">-->
 <!--		select count(username)-->
