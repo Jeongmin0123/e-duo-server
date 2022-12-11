@@ -80,21 +80,6 @@ public class AuthController {
     }
 
     @PostMapping("/auth/email")
-    public ResponseEntity<?> sendEmailAuthCode(@Value("${spring.mail.username}") String from, @RequestBody String to) throws MessagingException {
-        logger.info("{}에서 {}로 전송", from, to);
-        String emailAuthCode = NumberGenerator.generateRandomUniqueNumber(6);
-        AuthMailDto mailDto = AuthMailDto.builder()
-                                         .from(from)
-                                         .to(to)
-                                         .subject("[Eduo] 회원가입 이메일 인증 코드입니다.")
-                                         .build()
-                                         .setContent(emailAuthCode);
-
-        mailService.sendEmailAuthCode(mailDto);
-        return new ResponseEntity<>(emailAuthCode, HttpStatus.OK);
-    }
-
-    @PostMapping("/auth/validcheck")
     public ResponseEntity<?> emailValidCheck(@Value("${spring.mail.username}") String from, @RequestBody String userId)throws MessagingException {
         logger.info("Our Domain : {} to User : {}", from, userId);
         if(authService.isExistsUserId(userId)) {
