@@ -94,6 +94,24 @@ public class AuthController {
         return new ResponseEntity<>(emailAuthCode, HttpStatus.OK);
     }
 
+    @PostMapping("/auth/validcheck")
+    public ResponseEntity<?> emailValidCheck(@Value("${spring.mail.username}") String from, @RequestBody String userId)throws MessagingException {
+        logger.info("Our Domain : {} to User : {}", from, userId);
+        if(authService.isExistsUserId(userId)) {
+            String emailAuthCode = NumberGenerator.generateRandomUniqueNumber(6);
+            AuthMailDto mailDto = AuthMailDto.builder()
+                    .from(from)
+                    .to(userId)
+                    .subject("[Eduo] 회원가입 이메일 인증 코드입니다.")
+                    .build()
+                    .setContent(emailAuthCode);
+
+            mailService.sendEmailAuthCode(mailDto);
+            return new ResponseEntity<>(emailAuthCode, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
+
     @PostMapping("/auth/signup")
     public ResponseEntity<?> signup(@RequestBody Map<String, Object> params) {
         Object result = authService.registerUser(params);

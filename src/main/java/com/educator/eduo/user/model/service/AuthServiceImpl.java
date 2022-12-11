@@ -110,34 +110,11 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-    // >>>>>>>>>>>>>>>>>>>>>> UserService -> update
-
-
-//    @Override
-//    @Transactional
-//    public int updateTeacher(Teacher teacher) {
-//        teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
-//        userMapper.updateUser(teacher);
-//        return userMapper.updateTeacher(teacher);
-//    }
-//
-//    @Override
-//    @Transactional
-//    public int updateAssistant(Assistant assistant) {
-//        assistant.setPassword(passwordEncoder.encode(assistant.getPassword()));
-//        userMapper.updateUser(assistant);
-//        return userMapper.updateAssistant(assistant);
-//    }
-//
-//    @Override
-//    @Transactional
-//    public int updateStudent(Student student) {
-//        student.setPassword(passwordEncoder.encode(student.getPassword()));
-//        userMapper.updateUser(student);
-//        return userMapper.updateStudent(student);
-//    }
-
-    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isExistsUserId(String userId) {
+        return userMapper.existsByUserId(userId);
+    }
 
     private Authentication saveAuthentication(LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(

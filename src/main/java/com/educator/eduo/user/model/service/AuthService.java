@@ -16,6 +16,8 @@ public interface AuthService {
 
     Object registerUser(Map<String, Object> params);
 
+    boolean isExistsUserId(String userId);
+
 //    int updateTeacher(Teacher teacher);
 //
 //    int updateAssistant(Assistant assistant);
