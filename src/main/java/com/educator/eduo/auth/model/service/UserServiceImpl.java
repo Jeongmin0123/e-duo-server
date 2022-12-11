@@ -110,6 +110,35 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    // >>>>>>>>>>>>>>>>>>>>>> UserService -> update
+
+
+    @Override
+    @Transactional
+    public int updateTeacher(Teacher teacher) {
+        teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
+        userMapper.updateUser(teacher);
+        return userMapper.updateTeacher(teacher);
+    }
+
+    @Override
+    @Transactional
+    public int updateAssistant(Assistant assistant) {
+        assistant.setPassword(passwordEncoder.encode(assistant.getPassword()));
+        userMapper.updateUser(assistant);
+        return userMapper.updateAssistant(assistant);
+    }
+
+    @Override
+    @Transactional
+    public int updateStudent(Student student) {
+        student.setPassword(passwordEncoder.encode(student.getPassword()));
+        userMapper.updateUser(student);
+        return userMapper.updateStudent(student);
+    }
+
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
     private Authentication saveAuthentication(LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginDto.getUserId(), loginDto.getPassword()
