@@ -2,8 +2,10 @@ package com.educator.eduo.user.model.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class AuthMailDto {
 
     private final String from;

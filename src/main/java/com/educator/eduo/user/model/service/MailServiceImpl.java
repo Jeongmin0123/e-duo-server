@@ -16,7 +16,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService {
 
-    private final Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
+
     private final JavaMailSender mailSender;
 
     @Override
