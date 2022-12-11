@@ -27,11 +27,29 @@ CREATE TABLE IF NOT EXISTS `e_duo`.`user` (
   `password` VARCHAR(300) NOT NULL,
   `name` VARCHAR(20) NOT NULL,
   `phone` VARCHAR(11) NOT NULL,
-  `activated` TINYINT(4) DEFAULT 1,
+  `activated` TINYINT(4) NULL DEFAULT 1,
   `role` ENUM('ROLE_TEACHER', 'ROLE_ASSISTANT', 'ROLE_STUDENT') NOT NULL,
-  `register_date` timestamp default NOW(),
+  `register_date` TIMESTAMP NULL DEFAULT now(),
   PRIMARY KEY (`user_id`),
   UNIQUE INDEX `user_id_UNIQUE` (`user_id` ASC) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+-- -----------------------------------------------------
+-- Table `e_duo`.`assistant`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `e_duo`.`assistant` ;
+
+CREATE TABLE IF NOT EXISTS `e_duo`.`assistant` (
+  `user_id` VARCHAR(20) NOT NULL,
+  INDEX `fk_assistant_user1_idx` (`user_id` ASC) ,
+  PRIMARY KEY (`user_id`),
+  CONSTRAINT `fk_assistant_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `e_duo`.`user` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
@@ -48,31 +66,6 @@ CREATE TABLE IF NOT EXISTS `e_duo`.`teacher` (
   INDEX `fk_teacher_user1_idx` (`user_id` ASC) ,
   PRIMARY KEY (`user_id`),
   CONSTRAINT `fk_teacher_user1`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `e_duo`.`user` (`user_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
-
-
--- -----------------------------------------------------
--- Table `e_duo`.`assistant`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `e_duo`.`assistant` ;
-
-CREATE TABLE IF NOT EXISTS `e_duo`.`assistant` (
-  `user_id` VARCHAR(20) NOT NULL,
-  `teacher_user_id` VARCHAR(20) NOT NULL,
-  INDEX `fk_assistant_teacher1_idx` (`teacher_user_id` ASC) ,
-  INDEX `fk_assistant_user1_idx` (`user_id` ASC) ,
-  PRIMARY KEY (`user_id`),
-  CONSTRAINT `fk_assistant_teacher1`
-    FOREIGN KEY (`teacher_user_id`)
-    REFERENCES `e_duo`.`teacher` (`user_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_assistant_user1`
     FOREIGN KEY (`user_id`)
     REFERENCES `e_duo`.`user` (`user_id`)
     ON DELETE NO ACTION
@@ -162,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `e_duo`.`attendance` (
   `attendance_id` INT(11) NOT NULL AUTO_INCREMENT,
   `user_id` VARCHAR(20) NOT NULL,
   `lecture_lec_id` VARCHAR(65) NOT NULL,
-  `assignment` INT(1) NULL DEFAULT NULL,
+  `assignment` INT NULL DEFAULT 0,
   `done_date` TIMESTAMP NULL,
   `check_in` TINYINT NULL DEFAULT 0,
   PRIMARY KEY (`attendance_id`),
@@ -192,11 +185,11 @@ CREATE TABLE IF NOT EXISTS `e_duo`.`exam` (
   `type` ENUM('REVIEW', 'MOCK', 'MIDTERM', 'FINAL') NULL,
   `exam_date` TIMESTAMP NULL,
   `exam_name` VARCHAR(60) NULL,
-  `course_course_id` VARCHAR(60) NOT NULL,
+  `course_id` VARCHAR(60) NOT NULL,
   PRIMARY KEY (`exam_id`),
-  INDEX `fk_exam_course1_idx` (`course_course_id` ASC) ,
+  INDEX `fk_exam_course1_idx` (`course_id` ASC) ,
   CONSTRAINT `fk_exam_course1`
-    FOREIGN KEY (`course_course_id`)
+    FOREIGN KEY (`course_id`)
     REFERENCES `e_duo`.`course` (`course_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -212,17 +205,17 @@ CREATE TABLE IF NOT EXISTS `e_duo`.`score` (
   `score_idx` INT(11) NOT NULL,
   `score` INT(11) NULL DEFAULT NULL,
   `user_id` VARCHAR(20) NOT NULL,
-  `exam_exam_id` INT NOT NULL,
+  `exam_id` INT NOT NULL,
   PRIMARY KEY (`score_idx`),
   INDEX `fk_score_student1_idx` (`user_id` ASC) ,
-  INDEX `fk_score_exam1_idx` (`exam_exam_id` ASC) ,
+  INDEX `fk_score_exam1_idx` (`exam_id` ASC) ,
   CONSTRAINT `fk_score_student1`
     FOREIGN KEY (`user_id`)
     REFERENCES `e_duo`.`student` (`user_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_score_exam1`
-    FOREIGN KEY (`exam_exam_id`)
+    FOREIGN KEY (`exam_id`)
     REFERENCES `e_duo`.`exam` (`exam_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -285,6 +278,7 @@ CREATE TABLE IF NOT EXISTS `e_duo`.`sugang` (
   `course_id` VARCHAR(60) NOT NULL,
   `start_date` TIMESTAMP NOT NULL,
   `end_date` TIMESTAMP NULL,
+  `state` ENUM('ACCEPTED', 'WAIT', 'QUIT') NULL DEFAULT 'WAIT',
   PRIMARY KEY (`sugang_id`),
   INDEX `fk_sugang_course1_idx` (`course_id` ASC) ,
   INDEX `fk_sugang_student1_idx` (`user_id` ASC) ,
@@ -311,7 +305,7 @@ CREATE TABLE IF NOT EXISTS `e_duo`.`notice` (
   `course_id` VARCHAR(60) NOT NULL,
   `title` VARCHAR(100) NOT NULL,
   `content` BLOB NOT NULL,
-  `regist_date` TIMESTAMP NOT NULL,
+  `regist_date` TIMESTAMP NULL DEFAULT now(),
   `notice_type` ENUM('ASSIGNMENT', 'COURSE') NULL,
   PRIMARY KEY (`notice_id`),
   INDEX `fk_notice_course1_idx` (`course_id` ASC) ,
@@ -375,11 +369,11 @@ CREATE TABLE IF NOT EXISTS `e_duo`.`message_template` (
   `custom_template_1` BLOB NULL,
   `custom_template_2` BLOB NULL,
   `custom_template_3` BLOB NULL,
-  `teacher_user_id` VARCHAR(20) NOT NULL,
+  `user_id` VARCHAR(20) NOT NULL,
   PRIMARY KEY (`message_template_id`),
-  INDEX `fk_message_template_teacher1_idx` (`teacher_user_id` ASC) ,
+  INDEX `fk_message_template_teacher1_idx` (`user_id` ASC) ,
   CONSTRAINT `fk_message_template_teacher1`
-    FOREIGN KEY (`teacher_user_id`)
+    FOREIGN KEY (`user_id`)
     REFERENCES `e_duo`.`teacher` (`user_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -402,6 +396,30 @@ CREATE TABLE IF NOT EXISTS `e_duo`.`schedule` (
   CONSTRAINT `fk_schedule_course1`
     FOREIGN KEY (`course_id`)
     REFERENCES `e_duo`.`course` (`course_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `e_duo`.`hire`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `e_duo`.`hire` ;
+
+CREATE TABLE IF NOT EXISTS `e_duo`.`hire` (
+  `teacher_user_id` VARCHAR(20) NOT NULL,
+  `assistant_user_id` VARCHAR(20) NOT NULL,
+  `state` ENUM('ACCEPTED', 'WAIT') NULL DEFAULT 'WAIT',
+  INDEX `fk_hire_teacher1_idx` (`teacher_user_id` ASC) ,
+  INDEX `fk_hire_assistant1_idx` (`assistant_user_id` ASC) ,
+  CONSTRAINT `fk_hire_teacher1`
+    FOREIGN KEY (`teacher_user_id`)
+    REFERENCES `e_duo`.`teacher` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_hire_assistant1`
+    FOREIGN KEY (`assistant_user_id`)
+    REFERENCES `e_duo`.`assistant` (`user_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
