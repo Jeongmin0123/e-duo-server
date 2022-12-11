@@ -5,4 +5,5 @@ import com.educator.eduo.user.model.dto.JwtResponse;
 public interface TokenService {
 
     JwtResponse reissueAccessToken(String refreshToken);
+
 }
