@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin("*")
 public class UserController {
+
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
@@ -31,22 +32,31 @@ public class UserController {
     @PutMapping("/api/teacher")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     public ResponseEntity<?> modifyTeacher(@RequestBody Teacher teacher) {
-        int result = userService.updateTeacher(teacher);
-        if(result != 1) return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // 실패
+        if (!userService.updateTeacher(teacher)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @PutMapping("/api/assistant")
     @PreAuthorize("hasRole('ROLE_ASSISTANT')")
     public ResponseEntity<?> modifyAssistant(@RequestBody Assistant assistant) {
-        int result = userService.updateAssistant(assistant);
-        if(result != 1) return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // 실패
+        if (!userService.updateAssistant(assistant)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @PutMapping("/api/student")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public ResponseEntity<?> modifyStudent(@RequestBody Student student) {
-        int result = userService.updateStudent(student);
-        if(result != 1) return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // 실패
+        if (!userService.updateStudent(student)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

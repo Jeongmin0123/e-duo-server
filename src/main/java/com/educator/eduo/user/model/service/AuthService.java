@@ -2,11 +2,10 @@ package com.educator.eduo.user.model.service;
 
 import com.educator.eduo.user.model.dto.JwtResponse;
 import com.educator.eduo.user.model.dto.LoginDto;
-import com.educator.eduo.user.model.entity.Assistant;
-import com.educator.eduo.user.model.entity.Student;
-import com.educator.eduo.user.model.entity.Teacher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Map;
+import java.util.Optional;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public interface AuthService {
 
@@ -14,13 +13,8 @@ public interface AuthService {
 
     Object getUserInfoUsingKakao(String accessTokenByKakao) throws JsonProcessingException;
 
-    Object registerUser(Map<String, Object> params);
+    Optional<JwtResponse> registerUser(Map<String, Object> params) throws IllegalArgumentException, UsernameNotFoundException;
 
     boolean isExistsUserId(String userId);
 
-//    int updateTeacher(Teacher teacher);
-//
-//    int updateAssistant(Assistant assistant);
-//
-//    int updateStudent(Student student);
 }

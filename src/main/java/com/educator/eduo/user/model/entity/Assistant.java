@@ -10,5 +10,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class Assistant extends User {
+
     private String teacherUserId;
+
 }

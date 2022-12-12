@@ -4,13 +4,16 @@ import com.educator.eduo.user.model.entity.Assistant;
 import com.educator.eduo.user.model.entity.Student;
 import com.educator.eduo.user.model.entity.Teacher;
 import com.educator.eduo.user.model.entity.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public interface UserService {
-    int updateTeacher(Teacher teacher);
 
-    int updateAssistant(Assistant assistant);
+    boolean updateTeacher(Teacher teacher);
 
-    int updateStudent(Student student);
+    boolean updateAssistant(Assistant assistant);
 
-    int updateUser(User user);
+    boolean updateStudent(Student student);
+
+    void updatePassword(User user) throws UsernameNotFoundException;
+
 }
