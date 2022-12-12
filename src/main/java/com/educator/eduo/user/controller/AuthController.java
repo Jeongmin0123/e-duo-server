@@ -13,15 +13,14 @@ import com.educator.eduo.util.NumberGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.ibatis.javassist.bytecode.DuplicateMemberException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -91,7 +90,7 @@ public class AuthController {
 
     @PostMapping("/auth/email")
     public ResponseEntity<?> emailValidCheck(@Value("${spring.mail.username}") String from, @RequestBody String userId)
-            throws SQLException, MessagingException, DuplicateMemberException {
+            throws SQLException, MessagingException, DuplicateKeyException {
         logger.info("Our Domain : {} to User : {}", from, userId);
 
         if (!authService.isExistsUserId(userId)) {
@@ -107,12 +106,12 @@ public class AuthController {
             return new ResponseEntity<>(emailAuthCode, HttpStatus.OK);
         }
 
-        throw new DuplicateMemberException("이미 가입된 회원입니다.");
+        throw new DuplicateKeyException("이미 가입된 회원입니다.");
     }
 
     @PostMapping("/auth/signup")
     public ResponseEntity<?> signup(@RequestBody Map<String, Object> params)
-            throws SQLException, DuplicateMemberException, IllegalArgumentException, UsernameNotFoundException {
+            throws SQLException, DuplicateKeyException, IllegalArgumentException, UsernameNotFoundException {
         JwtResponse result = authService.registerUser(params);
         logger.info("result to register user: {}", result);
         return ResponseEntity.ok(result);

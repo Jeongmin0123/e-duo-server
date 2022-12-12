@@ -1,29 +1,20 @@
 package com.educator.eduo.user.model.service;
 
+import com.educator.eduo.security.TokenProvider;
 import com.educator.eduo.user.model.dto.JwtResponse;
 import com.educator.eduo.user.model.dto.LoginDto;
-import com.educator.eduo.user.model.entity.Assistant;
-import com.educator.eduo.user.model.entity.Student;
-import com.educator.eduo.user.model.entity.Teacher;
-import com.educator.eduo.user.model.entity.Token;
-import com.educator.eduo.user.model.entity.User;
+import com.educator.eduo.user.model.entity.*;
 import com.educator.eduo.user.model.mapper.TokenMapper;
 import com.educator.eduo.user.model.mapper.UserMapper;
-import com.educator.eduo.security.TokenProvider;
 import com.educator.eduo.util.HttpUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.sql.SQLException;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import javax.swing.text.TabExpander;
-import org.apache.ibatis.javassist.bytecode.DuplicateMemberException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -37,6 +28,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -105,12 +101,12 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public JwtResponse registerUser(Map<String, Object> params)
-            throws SQLException, DuplicateMemberException, IllegalArgumentException, UsernameNotFoundException {
+            throws SQLException, DuplicateKeyException, IllegalArgumentException, UsernameNotFoundException {
         // 1. userId@domain 으로 아이디 중복 검사
         String userId = (String) params.get("userId");
-        if (userMapper.existsByUserId(userId)) {
-            throw new DuplicateMemberException("이미 가입된 회원입니다.");
-        }
+//        if (userMapper.existsByUserId(userId)) {
+//            throw new DuplicateMemberException("이미 가입된 회원입니다.");
+//        }
 
         // 2. ObjectMapper -> 맞는 VO로 변환 후 user 테이블과 role에 맞는 테이블에 정보 입력
         insertMultiUserInfo(params);
@@ -179,6 +175,7 @@ public class AuthServiceImpl implements AuthService {
             teacher.encryptPassword(passwordEncoder);
             userMapper.insertUser(teacher);
             userMapper.insertTeacher(teacher);
+            return;
         }
 
         if (roleType.equals("ROLE_ASSISTANT")) {
@@ -188,6 +185,7 @@ public class AuthServiceImpl implements AuthService {
             assistant.encryptPassword(passwordEncoder);
             userMapper.insertUser(assistant);
             userMapper.insertAssistant(assistant);
+            return;
         }
 
         if (roleType.equals("ROLE_STUDENT")) {
@@ -197,6 +195,7 @@ public class AuthServiceImpl implements AuthService {
             student.encryptPassword(passwordEncoder);
             userMapper.insertUser(student);
             userMapper.insertStudent(student);
+            return;
         }
 
         throw new IllegalArgumentException("잘못된 ROLE이 입력되었습니다.");
