@@ -49,6 +49,10 @@
 		INSERT INTO assistant (user_id)
 		VALUES (#{ userId })
 	</insert>
+	<insert id="insertHire" parameterType="Hire">
+		INSERT INTO hire (assistant_user_id, teacher_user_id)
+		VALUES (#{assistantUserId}, #{teacherUserId})
+	</insert>
 
 	<insert id="insertStudent" parameterType="Student">
 		INSERT INTO STUDENT(user_id, birth_date, school_name, grade, parent, parent_phone)
