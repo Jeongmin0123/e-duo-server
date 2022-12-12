@@ -13,7 +13,7 @@ public interface AuthService {
 
     Object getUserInfoUsingKakao(String accessTokenByKakao) throws JsonProcessingException;
 
-    Optional<JwtResponse> registerUser(Map<String, Object> params) throws UsernameNotFoundException;
+    Optional<JwtResponse> registerUser(Map<String, Object> params) throws IllegalArgumentException, UsernameNotFoundException;
 
     boolean isExistsUserId(String userId);
 

@@ -102,7 +102,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public Optional<JwtResponse> registerUser(Map<String, Object> params) throws IllegalArgumentException {
+    public Optional<JwtResponse> registerUser(Map<String, Object> params) throws IllegalArgumentException, UsernameNotFoundException {
         // 1. userId@domain 으로 아이디 중복 검사
         String userId = (String) params.get("userId");
         if (userMapper.existsByUserId(userId)) {
@@ -110,7 +110,10 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // 2. ObjectMapper -> 맞는 VO로 변환 후 user 테이블과 role에 맞는 테이블에 정보 입력
-        User user = insertMultiUserInfo(params);
+        insertMultiUserInfo(params);
+        User user = userMapper.selectUserByUserId(userId)
+                              .orElseThrow(() -> new UsernameNotFoundException("회원 가입에 실패했습니다."));
+
         return Optional.of(saveAuthenticationDirectly(user));
     }
 
@@ -162,7 +165,7 @@ public class AuthServiceImpl implements AuthService {
         return saveAuthenticationDirectly(user);
     }
 
-    private User insertMultiUserInfo(Map<String, Object> params) throws IllegalArgumentException {
+    private void insertMultiUserInfo(Map<String, Object> params) throws IllegalArgumentException {
         ObjectMapper objectMapper = new ObjectMapper();
         String roleType = (String) params.get("role");
 
@@ -173,7 +176,6 @@ public class AuthServiceImpl implements AuthService {
             teacher.encryptPassword(passwordEncoder);
             userMapper.insertUser(teacher);
             userMapper.insertTeacher(teacher);
-            return teacher;
         }
 
         if (roleType.equals("ROLE_ASSISTANT")) {
@@ -183,7 +185,6 @@ public class AuthServiceImpl implements AuthService {
             assistant.encryptPassword(passwordEncoder);
             userMapper.insertUser(assistant);
             userMapper.insertAssistant(assistant);
-            return assistant;
         }
 
         if (roleType.equals("ROLE_STUDENT")) {
@@ -193,7 +194,6 @@ public class AuthServiceImpl implements AuthService {
             student.encryptPassword(passwordEncoder);
             userMapper.insertUser(student);
             userMapper.insertStudent(student);
-            return student;
         }
 
         throw new IllegalArgumentException("잘못된 ROLE이 입력되었습니다.");
