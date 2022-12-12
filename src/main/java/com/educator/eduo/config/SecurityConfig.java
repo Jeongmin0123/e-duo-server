@@ -43,7 +43,7 @@ public class SecurityConfig {
                        .disable()
                    .exceptionHandling()
                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                       .accessDeniedHandler(jwtAccessDeniedHandler)
+                       .accessDeniedHandler(jwtAccessDeniedHandler) // 생략해도 AdviceController에서 잡아주기 때문에 괜찮습니다.
                    .and()
                    .sessionManagement()
                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
