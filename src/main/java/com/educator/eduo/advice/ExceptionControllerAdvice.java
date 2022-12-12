@@ -1,5 +1,6 @@
 package com.educator.eduo.advice;
 
+import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class ExceptionControllerAdvice {
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<?> handle204(Exception e) {
+        e.printStackTrace();
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NO_CONTENT);
+    }
 
     @ExceptionHandler({IllegalArgumentException.class, UsernameNotFoundException.class})
     public ResponseEntity<?> handle400(Exception e) {
@@ -25,6 +31,8 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e) {
         e.printStackTrace();
+        // 추후 삭제 필요!!!!!
+        System.out.println("ADVICE CONTROLLER!!!!!!! SSSSSSSSSSSSS");
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
