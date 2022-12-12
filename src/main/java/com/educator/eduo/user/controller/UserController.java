@@ -5,6 +5,7 @@ import com.educator.eduo.user.model.entity.Student;
 import com.educator.eduo.user.model.entity.Teacher;
 import com.educator.eduo.user.model.service.AuthService;
 import com.educator.eduo.user.model.service.UserService;
+import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class UserController {
 
     @PutMapping("/api/teacher")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
-    public ResponseEntity<?> modifyTeacher(@RequestBody Teacher teacher) {
+    public ResponseEntity<?> modifyTeacher(@RequestBody Teacher teacher) throws SQLException {
         if (!userService.updateTeacher(teacher)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -41,7 +42,7 @@ public class UserController {
 
     @PutMapping("/api/assistant")
     @PreAuthorize("hasRole('ROLE_ASSISTANT')")
-    public ResponseEntity<?> modifyAssistant(@RequestBody Assistant assistant) {
+    public ResponseEntity<?> modifyAssistant(@RequestBody Assistant assistant) throws SQLException {
         if (!userService.updateAssistant(assistant)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -51,7 +52,7 @@ public class UserController {
 
     @PutMapping("/api/student")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public ResponseEntity<?> modifyStudent(@RequestBody Student student) {
+    public ResponseEntity<?> modifyStudent(@RequestBody Student student) throws SQLException {
         if (!userService.updateStudent(student)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

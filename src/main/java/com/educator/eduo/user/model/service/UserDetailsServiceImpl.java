@@ -2,6 +2,7 @@ package com.educator.eduo.user.model.service;
 
 import com.educator.eduo.user.model.mapper.UserMapper;
 import com.educator.eduo.user.model.entity.User;
+import java.sql.SQLException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -5,7 +5,7 @@ import com.educator.eduo.user.model.entity.Student;
 import com.educator.eduo.user.model.entity.Teacher;
 import com.educator.eduo.user.model.entity.User;
 import com.educator.eduo.user.model.mapper.UserMapper;
-import java.util.Optional;
+import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updatePassword(User user) {
+    public void updatePassword(User user) throws SQLException {
         User selected = userMapper.selectUserByUserId(user.getUserId())
                                   .orElseThrow(() -> new UsernameNotFoundException("회원 가입하지 않은 유저입니다."));
 
@@ -41,26 +41,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public boolean updateTeacher(Teacher teacher) {
+    public boolean updateTeacher(Teacher teacher) throws SQLException {
         teacher.encryptPassword(passwordEncoder);
-        userMapper.updateUser(teacher);
-        return userMapper.updateTeacher(teacher) == 1;
+        return userMapper.updateUser(teacher) == 1
+                && userMapper.updateTeacher(teacher) == 1;
     }
 
     @Override
     @Transactional
-    public boolean updateAssistant(Assistant assistant) {
+    public boolean updateAssistant(Assistant assistant) throws SQLException {
         assistant.encryptPassword(passwordEncoder);
-        userMapper.updateUser(assistant);
-        return userMapper.updateAssistant(assistant) == 1;
+        return userMapper.updateUser(assistant) == 1
+                && userMapper.updateAssistant(assistant) == 1;
     }
 
     @Override
     @Transactional
-    public boolean updateStudent(Student student) {
+    public boolean updateStudent(Student student) throws SQLException {
         student.encryptPassword(passwordEncoder);
-        userMapper.updateUser(student);
-        return userMapper.updateStudent(student) == 1;
+        return userMapper.updateUser(student) == 1
+                && userMapper.updateStudent(student) == 1;
     }
 
 }
