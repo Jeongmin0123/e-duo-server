@@ -154,15 +154,15 @@ DROP TABLE IF EXISTS `e_duo`.`attendance` ;
 CREATE TABLE IF NOT EXISTS `e_duo`.`attendance` (
   `attendance_id` INT(11) NOT NULL AUTO_INCREMENT,
   `user_id` VARCHAR(20) NOT NULL,
-  `lecture_lec_id` VARCHAR(65) NOT NULL,
+  `lecture_id` VARCHAR(65) NOT NULL,
   `assignment` INT NULL DEFAULT 0,
   `done_date` TIMESTAMP NULL,
   `check_in` TINYINT NULL DEFAULT 0,
   PRIMARY KEY (`attendance_id`),
-  INDEX `fk_attendance_lecture1_idx` (`lecture_lec_id` ASC) ,
+  INDEX `fk_attendance_lecture1_idx` (`lecture_id` ASC) ,
   INDEX `fk_attendance_student1_idx` (`user_id` ASC) ,
   CONSTRAINT `fk_attendance_lecture1`
-    FOREIGN KEY (`lecture_lec_id`)
+    FOREIGN KEY (`lecture_id`)
     REFERENCES `e_duo`.`lecture` (`lecture_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
