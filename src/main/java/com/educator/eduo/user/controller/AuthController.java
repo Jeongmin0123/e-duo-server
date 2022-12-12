@@ -1,13 +1,13 @@
 package com.educator.eduo.user.controller;
 
+import com.educator.eduo.security.TokenProvider;
 import com.educator.eduo.user.model.dto.AuthMailDto;
 import com.educator.eduo.user.model.dto.JwtResponse;
 import com.educator.eduo.user.model.dto.LoginDto;
 import com.educator.eduo.user.model.entity.User;
+import com.educator.eduo.user.model.service.AuthService;
 import com.educator.eduo.user.model.service.MailService;
 import com.educator.eduo.user.model.service.TokenService;
-import com.educator.eduo.user.model.service.AuthService;
-import com.educator.eduo.security.TokenProvider;
 import com.educator.eduo.user.model.service.UserService;
 import com.educator.eduo.util.NumberGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -108,7 +108,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<?> signup(@RequestBody Map<String, Object> params) throws IllegalArgumentException {
+    public ResponseEntity<?> signup(@RequestBody Map<String, Object> params) throws IllegalArgumentException, UsernameNotFoundException {
         Optional<JwtResponse> result = authService.registerUser(params);
         logger.info("result to register user: {}", result);
 
