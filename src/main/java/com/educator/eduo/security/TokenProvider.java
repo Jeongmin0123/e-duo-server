@@ -44,8 +44,8 @@ public class TokenProvider implements InitializingBean {
             @Value("${jwt.refreshtoken-validity-in-seconds}") long refreshTokenValidityInMilliSeconds
     ) {
         this.secret = secret;
-        this.accessTokenValidityInMilliSeconds = accessTokenValidityInMilliSeconds*1000;
-        this.refreshTokenValidityInMilliSeconds = refreshTokenValidityInMilliSeconds*1000;
+        this.accessTokenValidityInMilliSeconds = accessTokenValidityInMilliSeconds;
+        this.refreshTokenValidityInMilliSeconds = refreshTokenValidityInMilliSeconds;
     }
 
     @Override
