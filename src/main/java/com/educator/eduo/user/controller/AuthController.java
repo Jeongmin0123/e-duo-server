@@ -11,11 +11,13 @@ import com.educator.eduo.user.model.service.TokenService;
 import com.educator.eduo.user.model.service.UserService;
 import com.educator.eduo.util.NumberGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.ibatis.javassist.bytecode.DuplicateMemberException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,13 +54,13 @@ public class AuthController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<?> authenticate(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<?> authenticate(@RequestBody LoginDto loginDto) throws SQLException {
         JwtResponse jwtResponse = authService.authenticate(loginDto);
         return ResponseEntity.ok(jwtResponse);
     }
 
     @PostMapping("/api/refreshtoken")
-    public ResponseEntity<?> reissueAccessToken(HttpServletRequest request) {
+    public ResponseEntity<?> reissueAccessToken(HttpServletRequest request) throws SQLException {
         String refreshToken = tokenProvider.resolveToken(request);
         JwtResponse jwtResponse = tokenService.reissueAccessToken(refreshToken);
         return ResponseEntity.ok(jwtResponse);
@@ -72,7 +74,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/oauthlogin")
-    public ResponseEntity<?> kakaoLogin(HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<?> kakaoLogin(HttpServletRequest request) throws SQLException, JsonProcessingException {
         String accessTokenByKakao = tokenProvider.resolveToken(request);
         Object userInfo = authService.getUserInfoUsingKakao(accessTokenByKakao);
 
@@ -88,7 +90,8 @@ public class AuthController {
     }
 
     @PostMapping("/auth/email")
-    public ResponseEntity<?> emailValidCheck(@Value("${spring.mail.username}") String from, @RequestBody String userId) throws MessagingException {
+    public ResponseEntity<?> emailValidCheck(@Value("${spring.mail.username}") String from, @RequestBody String userId)
+            throws SQLException, MessagingException, DuplicateMemberException {
         logger.info("Our Domain : {} to User : {}", from, userId);
 
         if (!authService.isExistsUserId(userId)) {
@@ -104,23 +107,20 @@ public class AuthController {
             return new ResponseEntity<>(emailAuthCode, HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
+        throw new DuplicateMemberException("이미 가입된 회원입니다.");
     }
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<?> signup(@RequestBody Map<String, Object> params) throws IllegalArgumentException, UsernameNotFoundException {
-        Optional<JwtResponse> result = authService.registerUser(params);
+    public ResponseEntity<?> signup(@RequestBody Map<String, Object> params)
+            throws SQLException, DuplicateMemberException, IllegalArgumentException, UsernameNotFoundException {
+        JwtResponse result = authService.registerUser(params);
         logger.info("result to register user: {}", result);
-
-        if (!result.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-
-        return ResponseEntity.ok(result.get());
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/auth/mypw")
-    public ResponseEntity<?> findPassword(@Value("${spring.mail.username}") String from, @RequestBody String userId) throws UsernameNotFoundException, MessagingException {
+    public ResponseEntity<?> findPassword(@Value("${spring.mail.username}") String from, @RequestBody String userId)
+            throws SQLException, UsernameNotFoundException, MessagingException {
         String uuidPassword = UUID.randomUUID().toString().substring(18);
         User user = User.builder()
                         .userId(userId)

@@ -14,10 +14,12 @@ import com.educator.eduo.util.HttpUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import javax.swing.text.TabExpander;
+import org.apache.ibatis.javassist.bytecode.DuplicateMemberException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public JwtResponse authenticate(LoginDto loginDto) {
+    public JwtResponse authenticate(LoginDto loginDto) throws SQLException {
         logger.info("Login Target: {}", loginDto);
         Authentication authentication = saveAuthentication(loginDto);
         Token newToken = registerOrUpdateJwtToken(authentication);
@@ -76,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public Object getUserInfoUsingKakao(String accessTokenByKakao) throws JsonProcessingException {
+    public Object getUserInfoUsingKakao(String accessTokenByKakao) throws SQLException, JsonProcessingException {
         HttpHeaders headers = HttpUtil.generateHttpHeadersForJWT(accessTokenByKakao);
         RestTemplate restTemplate = HttpUtil.generateRestTemplate();
 
@@ -102,11 +104,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public Optional<JwtResponse> registerUser(Map<String, Object> params) throws IllegalArgumentException, UsernameNotFoundException {
+    public JwtResponse registerUser(Map<String, Object> params)
+            throws SQLException, DuplicateMemberException, IllegalArgumentException, UsernameNotFoundException {
         // 1. userId@domain 으로 아이디 중복 검사
         String userId = (String) params.get("userId");
         if (userMapper.existsByUserId(userId)) {
-            return Optional.empty();
+            throw new DuplicateMemberException("이미 가입된 회원입니다.");
         }
 
         // 2. ObjectMapper -> 맞는 VO로 변환 후 user 테이블과 role에 맞는 테이블에 정보 입력
@@ -114,12 +117,12 @@ public class AuthServiceImpl implements AuthService {
         User user = userMapper.selectUserByUserId(userId)
                               .orElseThrow(() -> new UsernameNotFoundException("회원 가입에 실패했습니다."));
 
-        return Optional.of(saveAuthenticationDirectly(user));
+        return saveAuthenticationDirectly(user);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public boolean isExistsUserId(String userId) {
+    public boolean isExistsUserId(String userId) throws SQLException {
         return userMapper.existsByUserId(userId);
     }
 
@@ -136,7 +139,7 @@ public class AuthServiceImpl implements AuthService {
         return authentication;
     }
 
-    private Token registerOrUpdateJwtToken(Authentication authentication) {
+    private Token registerOrUpdateJwtToken(Authentication authentication) throws SQLException {
         Optional<Token> oldToken = tokenMapper.selectTokenByUserId(authentication.getName());
         Token newToken = tokenProvider.createNewToken(authentication);
 
@@ -149,7 +152,7 @@ public class AuthServiceImpl implements AuthService {
         return newToken;
     }
 
-    private JwtResponse saveAuthenticationDirectly(User user) {
+    private JwtResponse saveAuthenticationDirectly(User user) throws SQLException {
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 user, "", user.getAuthorities()
         );
@@ -158,14 +161,14 @@ public class AuthServiceImpl implements AuthService {
         return tokenProvider.createJwtResponse(authentication, newToken);
     }
 
-    private JwtResponse oauthLogin(LoginDto loginDto) {
+    private JwtResponse oauthLogin(LoginDto loginDto) throws SQLException, UsernameNotFoundException {
         User user = userMapper.loadUserByUsername(loginDto.getUserId())
                               .orElseThrow(() -> new UsernameNotFoundException(loginDto.getUserId() + "는 회원이 아닙니다."));
 
         return saveAuthenticationDirectly(user);
     }
 
-    private void insertMultiUserInfo(Map<String, Object> params) throws IllegalArgumentException {
+    private void insertMultiUserInfo(Map<String, Object> params) throws SQLException, IllegalArgumentException {
         ObjectMapper objectMapper = new ObjectMapper();
         String roleType = (String) params.get("role");
 

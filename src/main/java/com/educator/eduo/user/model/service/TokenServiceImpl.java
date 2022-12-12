@@ -5,6 +5,7 @@ import com.educator.eduo.user.model.entity.Token;
 import com.educator.eduo.user.model.mapper.TokenMapper;
 
 import com.educator.eduo.security.TokenProvider;
+import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +26,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     @Transactional
-    public JwtResponse reissueAccessToken(String refreshToken) {
+    public JwtResponse reissueAccessToken(String refreshToken) throws SQLException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String newAccessToken = tokenProvider.createAccessToken(authentication);
         Token token = new Token(authentication.getName(), newAccessToken, refreshToken);
