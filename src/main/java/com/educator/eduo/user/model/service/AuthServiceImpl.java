@@ -1,26 +1,20 @@
 package com.educator.eduo.user.model.service;
 
+import com.educator.eduo.security.TokenProvider;
 import com.educator.eduo.user.model.dto.JwtResponse;
 import com.educator.eduo.user.model.dto.LoginDto;
-import com.educator.eduo.user.model.entity.Assistant;
-import com.educator.eduo.user.model.entity.Student;
-import com.educator.eduo.user.model.entity.Teacher;
-import com.educator.eduo.user.model.entity.Token;
-import com.educator.eduo.user.model.entity.User;
+import com.educator.eduo.user.model.entity.*;
 import com.educator.eduo.user.model.mapper.TokenMapper;
 import com.educator.eduo.user.model.mapper.UserMapper;
-import com.educator.eduo.security.TokenProvider;
 import com.educator.eduo.util.HttpUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -34,6 +28,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -66,7 +65,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public JwtResponse authenticate(LoginDto loginDto) {
+    public JwtResponse authenticate(LoginDto loginDto) throws SQLException {
         logger.info("Login Target: {}", loginDto);
         Authentication authentication = saveAuthentication(loginDto);
         Token newToken = registerOrUpdateJwtToken(authentication);
@@ -75,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public Object getUserInfoUsingKakao(String accessTokenByKakao) throws JsonProcessingException {
+    public Object getUserInfoUsingKakao(String accessTokenByKakao) throws SQLException, JsonProcessingException {
         HttpHeaders headers = HttpUtil.generateHttpHeadersForJWT(accessTokenByKakao);
         RestTemplate restTemplate = HttpUtil.generateRestTemplate();
 
@@ -83,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
         ResponseEntity<String> response = restTemplate.exchange(requestUrlForKakao, HttpMethod.GET, request, String.class);
 
         JsonNode json = new ObjectMapper().readTree(response.getBody());
-        String userId = json.get("kakao_accout").get("email").asText();
+        String userId = json.get("kakao_account").get("email").asText();
         String pseudoPassword = UUID.randomUUID().toString();
         LoginDto loginDto = LoginDto.builder()
                                     .userId(userId)
@@ -101,19 +100,25 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public Object registerUser(Map<String, Object> params) {
+    public JwtResponse registerUser(Map<String, Object> params)
+            throws SQLException, DuplicateKeyException, IllegalArgumentException, UsernameNotFoundException {
         // 1. userId@domain 으로 아이디 중복 검사
-        String userId= (String) params.get("userId");
-        if(userMapper.existsByUserId(userId)) return Integer.valueOf(-1);
+        String userId = (String) params.get("userId");
+//        if (userMapper.existsByUserId(userId)) {
+//            throw new DuplicateMemberException("이미 가입된 회원입니다.");
+//        }
 
         // 2. ObjectMapper -> 맞는 VO로 변환 후 user 테이블과 role에 맞는 테이블에 정보 입력
-        return insertMultiUserInfo(params);
+        insertMultiUserInfo(params);
+        User user = userMapper.selectUserByUserId(userId)
+                              .orElseThrow(() -> new UsernameNotFoundException("회원 가입에 실패했습니다."));
 
+        return saveAuthenticationDirectly(user);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public boolean isExistsUserId(String userId) {
+    public boolean isExistsUserId(String userId) throws SQLException {
         return userMapper.existsByUserId(userId);
     }
 
@@ -130,7 +135,7 @@ public class AuthServiceImpl implements AuthService {
         return authentication;
     }
 
-    private Token registerOrUpdateJwtToken(Authentication authentication) {
+    private Token registerOrUpdateJwtToken(Authentication authentication) throws SQLException {
         Optional<Token> oldToken = tokenMapper.selectTokenByUserId(authentication.getName());
         Token newToken = tokenProvider.createNewToken(authentication);
 
@@ -143,7 +148,7 @@ public class AuthServiceImpl implements AuthService {
         return newToken;
     }
 
-    private JwtResponse saveDirectAuthentication(User user) {
+    private JwtResponse saveAuthenticationDirectly(User user) throws SQLException {
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 user, "", user.getAuthorities()
         );
@@ -152,41 +157,48 @@ public class AuthServiceImpl implements AuthService {
         return tokenProvider.createJwtResponse(authentication, newToken);
     }
 
-    private JwtResponse oauthLogin(LoginDto loginDto) {
+    private JwtResponse oauthLogin(LoginDto loginDto) throws SQLException, UsernameNotFoundException {
         User user = userMapper.loadUserByUsername(loginDto.getUserId())
                               .orElseThrow(() -> new UsernameNotFoundException(loginDto.getUserId() + "는 회원이 아닙니다."));
 
-        return saveDirectAuthentication(user);
+        return saveAuthenticationDirectly(user);
     }
 
-
-
-    private Object insertMultiUserInfo(Map<String, Object> params) {
+    private void insertMultiUserInfo(Map<String, Object> params) throws SQLException, IllegalArgumentException {
         ObjectMapper objectMapper = new ObjectMapper();
         String roleType = (String) params.get("role");
-        String userId = (String) params.get("userId");
-        if(roleType.equals("ROLE_TEACHER")) {
+
+        if (roleType.equals("ROLE_TEACHER")) {
             Teacher teacher = objectMapper.convertValue(params, Teacher.class);
             logger.info("Teacher : {}\tuserId : {}", teacher, teacher.getUserId());
-            teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
+
+            teacher.encryptPassword(passwordEncoder);
             userMapper.insertUser(teacher);
             userMapper.insertTeacher(teacher);
-        } else if (roleType.equals("ROLE_ASSISTANT")) {
-            Assistant assistant = objectMapper.convertValue(params, Assistant.class);
-            logger.info("Assistant : {}\tuserId : {}", assistant, assistant.getUserId());
-            assistant.setPassword(passwordEncoder.encode(assistant.getPassword()));
-            userMapper.insertUser(assistant);
-            userMapper.insertAssistant(assistant);
-        } else if (roleType.equals("ROLE_STUDENT")) {
-            Student student = objectMapper.convertValue(params, Student.class);
-            logger.info("Student : {}\tuserId : {}", student, student.getUserId());
-            student.setPassword(passwordEncoder.encode(student.getPassword()));
-            userMapper.insertUser(student);
-            userMapper.insertStudent(student);
+            return;
         }
 
-        User user = userMapper.loadUserByUsername(userId).orElse(null);
-        if(user == null) return Integer.valueOf(0);
-        return saveDirectAuthentication(user);
+        if (roleType.equals("ROLE_ASSISTANT")) {
+            Assistant assistant = objectMapper.convertValue(params, Assistant.class);
+            logger.info("Assistant : {}\tuserId : {}", assistant, assistant.getUserId());
+
+            assistant.encryptPassword(passwordEncoder);
+            userMapper.insertUser(assistant);
+            userMapper.insertAssistant(assistant);
+            return;
+        }
+
+        if (roleType.equals("ROLE_STUDENT")) {
+            Student student = objectMapper.convertValue(params, Student.class);
+            logger.info("Student : {}\tuserId : {}", student, student.getUserId());
+
+            student.encryptPassword(passwordEncoder);
+            userMapper.insertUser(student);
+            userMapper.insertStudent(student);
+            return;
+        }
+
+        throw new IllegalArgumentException("잘못된 ROLE이 입력되었습니다.");
     }
+
 }

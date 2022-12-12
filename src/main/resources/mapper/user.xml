@@ -46,8 +46,8 @@
 	</insert>
 
 	<insert id="insertAssistant" parameterType="Assistant">
-		INSERT INTO assistant (user_id, teacher_user_id)
-		VALUES (#{ userId }, #{ teacherUserId })
+		INSERT INTO assistant (user_id)
+		VALUES (#{ userId })
 	</insert>
 
 	<insert id="insertStudent" parameterType="Student">

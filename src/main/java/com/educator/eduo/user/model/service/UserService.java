@@ -4,13 +4,17 @@ import com.educator.eduo.user.model.entity.Assistant;
 import com.educator.eduo.user.model.entity.Student;
 import com.educator.eduo.user.model.entity.Teacher;
 import com.educator.eduo.user.model.entity.User;
+import java.sql.SQLException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public interface UserService {
-    int updateTeacher(Teacher teacher);
 
-    int updateAssistant(Assistant assistant);
+    boolean updateTeacher(Teacher teacher) throws SQLException;
 
-    int updateStudent(Student student);
+    boolean updateAssistant(Assistant assistant) throws SQLException;
 
-    int updateUser(User user);
+    boolean updateStudent(Student student) throws SQLException;
+
+    void updatePassword(User user) throws SQLException, UsernameNotFoundException;
+
 }

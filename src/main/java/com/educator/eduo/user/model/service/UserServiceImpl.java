@@ -5,15 +5,18 @@ import com.educator.eduo.user.model.entity.Student;
 import com.educator.eduo.user.model.entity.Teacher;
 import com.educator.eduo.user.model.entity.User;
 import com.educator.eduo.user.model.mapper.UserMapper;
+import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
+
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
     private final UserMapper userMapper;
@@ -27,36 +30,37 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public int updateUser(User user) {
-        User searchResult = userMapper.selectUserByUserId(user.getUserId()).orElse(null);
+    public void updatePassword(User user) throws SQLException {
+        User selected = userMapper.selectUserByUserId(user.getUserId())
+                                  .orElseThrow(() -> new UsernameNotFoundException("회원 가입하지 않은 유저입니다."));
 
-        if(searchResult == null) return 0;
-        searchResult.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userMapper.updateUser(searchResult);
+        selected.setPassword(user.getPassword());
+        selected.encryptPassword(passwordEncoder);
+        userMapper.updateUser(selected);
     }
 
     @Override
     @Transactional
-    public int updateTeacher(Teacher teacher) {
-        teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
-        userMapper.updateUser(teacher);
-        return userMapper.updateTeacher(teacher);
+    public boolean updateTeacher(Teacher teacher) throws SQLException {
+        teacher.encryptPassword(passwordEncoder);
+        return userMapper.updateUser(teacher) == 1
+                && userMapper.updateTeacher(teacher) == 1;
     }
 
     @Override
     @Transactional
-    public int updateAssistant(Assistant assistant) {
-        assistant.setPassword(passwordEncoder.encode(assistant.getPassword()));
-        userMapper.updateUser(assistant);
-        return userMapper.updateAssistant(assistant);
+    public boolean updateAssistant(Assistant assistant) throws SQLException {
+        assistant.encryptPassword(passwordEncoder);
+        return userMapper.updateUser(assistant) == 1
+                && userMapper.updateAssistant(assistant) == 1;
     }
 
     @Override
     @Transactional
-    public int updateStudent(Student student) {
-        student.setPassword(passwordEncoder.encode(student.getPassword()));
-        userMapper.updateUser(student);
-        return userMapper.updateStudent(student);
+    public boolean updateStudent(Student student) throws SQLException {
+        student.encryptPassword(passwordEncoder);
+        return userMapper.updateUser(student) == 1
+                && userMapper.updateStudent(student) == 1;
     }
 
 }

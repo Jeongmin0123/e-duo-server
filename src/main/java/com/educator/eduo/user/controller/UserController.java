@@ -5,6 +5,7 @@ import com.educator.eduo.user.model.entity.Student;
 import com.educator.eduo.user.model.entity.Teacher;
 import com.educator.eduo.user.model.service.AuthService;
 import com.educator.eduo.user.model.service.UserService;
+import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin("*")
 public class UserController {
+
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
@@ -30,23 +32,32 @@ public class UserController {
 
     @PutMapping("/api/teacher")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
-    public ResponseEntity<?> modifyTeacher(@RequestBody Teacher teacher) {
-        int result = userService.updateTeacher(teacher);
-        if(result != 1) return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // 실패
+    public ResponseEntity<?> modifyTeacher(@RequestBody Teacher teacher) throws SQLException {
+        if (!userService.updateTeacher(teacher)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @PutMapping("/api/assistant")
     @PreAuthorize("hasRole('ROLE_ASSISTANT')")
-    public ResponseEntity<?> modifyAssistant(@RequestBody Assistant assistant) {
-        int result = userService.updateAssistant(assistant);
-        if(result != 1) return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // 실패
+    public ResponseEntity<?> modifyAssistant(@RequestBody Assistant assistant) throws SQLException {
+        if (!userService.updateAssistant(assistant)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @PutMapping("/api/student")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public ResponseEntity<?> modifyStudent(@RequestBody Student student) {
-        int result = userService.updateStudent(student);
-        if(result != 1) return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // 실패
+    public ResponseEntity<?> modifyStudent(@RequestBody Student student) throws SQLException {
+        if (!userService.updateStudent(student)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }
