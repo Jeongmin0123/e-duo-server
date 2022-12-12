@@ -176,19 +176,21 @@ public class AuthServiceImpl implements AuthService {
             userMapper.insertUser(teacher);
             userMapper.insertTeacher(teacher);
             return;
-        }
-
-        if (roleType.equals("ROLE_ASSISTANT")) {
+        } else if (roleType.equals("ROLE_ASSISTANT")) {
             Assistant assistant = objectMapper.convertValue(params, Assistant.class);
             logger.info("Assistant : {}\tuserId : {}", assistant, assistant.getUserId());
 
             assistant.encryptPassword(passwordEncoder);
             userMapper.insertUser(assistant);
             userMapper.insertAssistant(assistant);
+            userMapper.insertHire(
+                    Hire.builder()
+                            .assistantUserId(assistant.getUserId())
+                            .teacherUserId(assistant.getTeacherUserId())
+                            .build()
+            );
             return;
-        }
-
-        if (roleType.equals("ROLE_STUDENT")) {
+        } else if (roleType.equals("ROLE_STUDENT")) {
             Student student = objectMapper.convertValue(params, Student.class);
             logger.info("Student : {}\tuserId : {}", student, student.getUserId());
 

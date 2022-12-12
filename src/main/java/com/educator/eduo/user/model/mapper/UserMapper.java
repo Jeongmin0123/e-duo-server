@@ -1,9 +1,7 @@
 package com.educator.eduo.user.model.mapper;
 
-import com.educator.eduo.user.model.entity.Assistant;
-import com.educator.eduo.user.model.entity.Student;
-import com.educator.eduo.user.model.entity.Teacher;
-import com.educator.eduo.user.model.entity.User;
+import com.educator.eduo.user.model.entity.*;
+
 import java.sql.SQLException;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -34,4 +32,5 @@ public interface UserMapper {
 
     int updateStudent(Student student) throws SQLException;
 
+    void insertHire(Hire hire);
 }
