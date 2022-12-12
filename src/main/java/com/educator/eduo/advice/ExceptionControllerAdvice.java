@@ -1,7 +1,6 @@
 package com.educator.eduo.advice;
 
-import java.sql.SQLException;
-import org.apache.ibatis.javassist.bytecode.DuplicateMemberException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,10 +16,10 @@ public class ExceptionControllerAdvice {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(DuplicateMemberException.class)
+    @ExceptionHandler( DuplicateKeyException.class)
     public ResponseEntity<?> handle409(Exception e) {
         e.printStackTrace();
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        return new ResponseEntity<>("이미 가입된 회원입니다.", HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(Exception.class)
