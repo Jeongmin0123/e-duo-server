@@ -122,6 +122,47 @@ public class AuthServiceImpl implements AuthService {
         return userMapper.existsByUserId(userId);
     }
 
+    @Override
+    @Transactional
+    public JwtResponse updateTeacher(Teacher teacher) throws SQLException {
+        teacher.encryptPassword(passwordEncoder);
+        if(userMapper.updateUser(teacher) == 1
+                && userMapper.updateTeacher(teacher) == 1) {
+            User principal = modifyPrincipal(teacher);
+            return saveAuthenticationDirectly(principal);
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public JwtResponse updateAssistant(Assistant assistant) throws SQLException {
+        assistant.encryptPassword(passwordEncoder);
+        if(userMapper.updateUser(assistant) == 1) {
+            User principal = modifyPrincipal(assistant);
+            return saveAuthenticationDirectly(principal);
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public JwtResponse updateStudent(Student student) throws SQLException {
+        student.encryptPassword(passwordEncoder);
+        if(userMapper.updateUser(student) == 1
+                && userMapper.updateStudent(student) == 1) {
+            User principal = modifyPrincipal(student);
+            return saveAuthenticationDirectly(principal);
+        }
+        return null;
+    }
+    private User modifyPrincipal(User user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User principal = (User) authentication.getPrincipal();
+        principal.setName(user.getName());
+        return principal;
+    }
+
     private Authentication saveAuthentication(LoginDto loginDto) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginDto.getUserId(), loginDto.getPassword()

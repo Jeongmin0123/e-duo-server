@@ -2,6 +2,9 @@ package com.educator.eduo.user.model.service;
 
 import com.educator.eduo.user.model.dto.JwtResponse;
 import com.educator.eduo.user.model.dto.LoginDto;
+import com.educator.eduo.user.model.entity.Assistant;
+import com.educator.eduo.user.model.entity.Student;
+import com.educator.eduo.user.model.entity.Teacher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.sql.SQLException;
 import java.util.Map;
@@ -19,4 +22,9 @@ public interface AuthService {
 
     boolean isExistsUserId(String userId) throws SQLException;
 
+    JwtResponse updateTeacher(Teacher teacher) throws SQLException;
+
+    JwtResponse updateAssistant(Assistant assistant) throws SQLException;
+
+    JwtResponse updateStudent(Student student) throws SQLException;
 }

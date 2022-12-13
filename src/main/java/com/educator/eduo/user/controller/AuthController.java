@@ -4,6 +4,9 @@ import com.educator.eduo.security.TokenProvider;
 import com.educator.eduo.user.model.dto.AuthMailDto;
 import com.educator.eduo.user.model.dto.JwtResponse;
 import com.educator.eduo.user.model.dto.LoginDto;
+import com.educator.eduo.user.model.entity.Assistant;
+import com.educator.eduo.user.model.entity.Student;
+import com.educator.eduo.user.model.entity.Teacher;
 import com.educator.eduo.user.model.entity.User;
 import com.educator.eduo.user.model.service.AuthService;
 import com.educator.eduo.user.model.service.MailService;
@@ -23,12 +26,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
@@ -136,6 +137,39 @@ public class AuthController {
         mailService.sendEmailAuthCode(mailDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/api/teacher")
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
+    public ResponseEntity<?> modifyTeacher(@RequestBody Teacher teacher) throws SQLException {
+        JwtResponse jwtResponse = authService.updateTeacher(teacher);
+        if (jwtResponse == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(authService.updateTeacher(teacher), HttpStatus.OK);
+    }
+
+    @PutMapping("/api/assistant")
+    @PreAuthorize("hasRole('ROLE_ASSISTANT')")
+    public ResponseEntity<?> modifyAssistant(@RequestBody Assistant assistant) throws SQLException {
+        JwtResponse jwtResponse = authService.updateAssistant(assistant);
+        if (jwtResponse == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
+    }
+
+    @PutMapping("/api/student")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public ResponseEntity<?> modifyStudent(@RequestBody Student student) throws SQLException {
+        JwtResponse jwtResponse = authService.updateStudent(student);
+        if (jwtResponse == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
     }
 
 }
