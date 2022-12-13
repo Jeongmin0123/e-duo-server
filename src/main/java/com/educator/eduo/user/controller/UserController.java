@@ -28,35 +28,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PutMapping("/api/teacher")
-    @PreAuthorize("hasRole('ROLE_TEACHER')")
-    public ResponseEntity<?> modifyTeacher(@RequestBody Teacher teacher) throws SQLException {
-        if (!userService.updateTeacher(teacher)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PutMapping("/api/assistant")
-    @PreAuthorize("hasRole('ROLE_ASSISTANT')")
-    public ResponseEntity<?> modifyAssistant(@RequestBody Assistant assistant) throws SQLException {
-        if (!userService.updateAssistant(assistant)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PutMapping("/api/student")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public ResponseEntity<?> modifyStudent(@RequestBody Student student) throws SQLException {
-        if (!userService.updateStudent(student)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 
     @PostMapping("/api/hire")
     @PreAuthorize("hasRole('ROLE_ASSISTANT')")

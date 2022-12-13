@@ -31,6 +31,7 @@ public class TokenProvider implements InitializingBean {
     private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
     private static final String AUTHORITIES_CLAIM_KEY = "auth";
     private static final String NAME_CLAIM_KEY = "name";
+    private static final String ACTIVATED_CLAIM_KEY = "activated";
     private static final String AUTHORIZATION_HEADER_KEY = "Authorization";
 
     private final String secret;
@@ -117,6 +118,7 @@ public class TokenProvider implements InitializingBean {
                              .userId(claims.getSubject())
                              .name((String) claims.get(NAME_CLAIM_KEY))
                              .role((String) claims.get(AUTHORITIES_CLAIM_KEY))
+                             .activated((int) claims.get(ACTIVATED_CLAIM_KEY))
                              .build();
 
         Collection<? extends GrantedAuthority> authorities = getAuthorities(claims);
@@ -135,6 +137,7 @@ public class TokenProvider implements InitializingBean {
                    .setSubject(user.getUserId())
                    .claim(AUTHORITIES_CLAIM_KEY, authorities)
                    .claim(NAME_CLAIM_KEY, user.getName())
+                   .claim(ACTIVATED_CLAIM_KEY, user.getActivated())
                    .setExpiration(expirationTime)
                    .signWith(this.key, SignatureAlgorithm.HS512)
                    .compact();
