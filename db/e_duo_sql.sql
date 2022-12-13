@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `e_duo`.`attendance` (
   `attendance_id` INT(11) NOT NULL AUTO_INCREMENT,
   `user_id` VARCHAR(20) NOT NULL,
   `lecture_id` VARCHAR(65) NOT NULL,
-  `assignment` INT NULL DEFAULT 0,
+  `assignment` INT(1) NULL DEFAULT NULL,
   `done_date` TIMESTAMP NULL,
   `check_in` TINYINT NULL DEFAULT 0,
   PRIMARY KEY (`attendance_id`),
@@ -273,15 +273,14 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `e_duo`.`sugang` ;
 
 CREATE TABLE IF NOT EXISTS `e_duo`.`sugang` (
-  `sugang_id` INT NOT NULL AUTO_INCREMENT,
   `user_id` VARCHAR(20) NOT NULL,
   `course_id` VARCHAR(60) NOT NULL,
   `start_date` TIMESTAMP NOT NULL,
   `end_date` TIMESTAMP NULL,
   `state` ENUM('ACCEPTED', 'WAIT', 'QUIT') NULL DEFAULT 'WAIT',
-  PRIMARY KEY (`sugang_id`),
   INDEX `fk_sugang_course1_idx` (`course_id` ASC) ,
   INDEX `fk_sugang_student1_idx` (`user_id` ASC) ,
+  PRIMARY KEY (`user_id`, `course_id`),
   CONSTRAINT `fk_sugang_course1`
     FOREIGN KEY (`course_id`)
     REFERENCES `e_duo`.`course` (`course_id`)
@@ -412,6 +411,7 @@ CREATE TABLE IF NOT EXISTS `e_duo`.`hire` (
   `state` ENUM('ACCEPTED', 'WAIT') NULL DEFAULT 'WAIT',
   INDEX `fk_hire_teacher1_idx` (`teacher_user_id` ASC) ,
   INDEX `fk_hire_assistant1_idx` (`assistant_user_id` ASC) ,
+  PRIMARY KEY (`teacher_user_id`, `assistant_user_id`),
   CONSTRAINT `fk_hire_teacher1`
     FOREIGN KEY (`teacher_user_id`)
     REFERENCES `e_duo`.`teacher` (`user_id`)
