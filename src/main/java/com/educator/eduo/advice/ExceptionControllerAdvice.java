@@ -27,7 +27,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler( DuplicateKeyException.class)
     public ResponseEntity<?> handle409(Exception e) {
         e.printStackTrace();
-        return new ResponseEntity<>("이미 가입된 회원입니다.", HttpStatus.CONFLICT);
+        return new ResponseEntity<>("이미 등록되어 있습니다.", HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
