@@ -28,9 +28,9 @@ public interface UserMapper {
 
     int updateTeacher(Teacher teacher) throws SQLException;
 
-    int updateAssistant(Assistant assistant) throws SQLException;
+//    int updateAssistant(Assistant assistant) throws SQLException;
 
     int updateStudent(Student student) throws SQLException;
 
-    void insertHire(Hire hire);
+    void insertHire(Hire hire) throws SQLException;
 }
