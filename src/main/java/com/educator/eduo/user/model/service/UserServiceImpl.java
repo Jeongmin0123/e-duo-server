@@ -1,9 +1,6 @@
 package com.educator.eduo.user.model.service;
 
-import com.educator.eduo.user.model.entity.Assistant;
-import com.educator.eduo.user.model.entity.Student;
-import com.educator.eduo.user.model.entity.Teacher;
-import com.educator.eduo.user.model.entity.User;
+import com.educator.eduo.user.model.entity.*;
 import com.educator.eduo.user.model.mapper.UserMapper;
 import java.sql.SQLException;
 import org.slf4j.Logger;
@@ -51,8 +48,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public boolean updateAssistant(Assistant assistant) throws SQLException {
         assistant.encryptPassword(passwordEncoder);
-        return userMapper.updateUser(assistant) == 1
-                && userMapper.updateAssistant(assistant) == 1;
+        return userMapper.updateUser(assistant) == 1;
     }
 
     @Override
@@ -63,4 +59,11 @@ public class UserServiceImpl implements UserService {
                 && userMapper.updateStudent(student) == 1;
     }
 
+
+    @Override
+    @Transactional
+    public void insertHire(Hire hire) throws SQLException {
+        userMapper.insertHire(hire);
+        return;
+    }
 }
