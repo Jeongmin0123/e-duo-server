@@ -105,7 +105,7 @@ DROP TABLE IF EXISTS `e_duo`.`lecture` ;
 
 CREATE TABLE IF NOT EXISTS `e_duo`.`lecture` (
   `lecture_id` VARCHAR(65) NOT NULL,
-  `cousre_id` VARCHAR(60) NOT NULL,
+  `course_id` VARCHAR(60) NOT NULL,
   `lecture_name` VARCHAR(50) NOT NULL,
   `lecture_date` TIMESTAMP NULL DEFAULT NULL,
   `start_time` TIME NULL,
