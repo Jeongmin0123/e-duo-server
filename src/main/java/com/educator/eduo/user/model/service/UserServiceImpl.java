@@ -51,4 +51,10 @@ public class UserServiceImpl implements UserService {
     public int updateHire(Hire hire) {
         return userMapper.updateHire(hire);
     }
+
+    @Override
+    @Transactional
+    public int deleteHire(Hire hire) {
+        return userMapper.deleteHire(hire);
+    }
 }

@@ -71,23 +71,29 @@
 		WHERE user_id=#{userId}
 	</update>
 
+	<update id="updateStudent" parameterType="Student">
+		UPDATE student
+		SET birth_date=#{birthDate}, school_name=#{schoolName}, grade=#{grade}, parent=#{parent}, parent_phone=#{parentPhone}
+		WHERE user_id=#{userId}
+	</update>
+
 	<update id="updateHire" parameterType="Hire">
 		UPDATE hire
 		SET state=#{state}
 		WHERE teacher_user_id=#{teacherUserId} and assistant_user_id=#{assistantUserId}
 	</update>
 
+	<delete id="deleteHire" parameterType="Hire">
+		DELETE FROM hire
+		WHERE teacher_user_id=#{teacherUserId} and assistant_user_id=#{assistantUserId}
+	</delete>
 <!--	<update id="updateAssistant" parameterType="Assistant">-->
 <!--		UPDATE assistant-->
 <!--		SET teacher_user_id=#{teacherUserId}-->
 <!--		WHERE user_id=#{userId}-->
 <!--	</update>-->
 
-	<update id="updateStudent" parameterType="Student">
-		UPDATE student
-		SET birth_date=#{birthDate}, school_name=#{schoolName}, grade=#{grade}, parent=#{parent}, parent_phone=#{parentPhone}
-		WHERE user_id=#{userId}
-	</update>
+
 
 <!--	<select id="existsByUsername" parameterType="string"-->
 <!--		resultType="int">-->

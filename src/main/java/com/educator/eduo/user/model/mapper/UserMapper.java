@@ -35,4 +35,6 @@ public interface UserMapper {
     void insertHire(Hire hire) throws SQLException;
 
     int updateHire(Hire hire);
+
+    int deleteHire(Hire hire);
 }

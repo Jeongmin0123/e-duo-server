@@ -44,4 +44,12 @@ public class UserController {
         if(result != 1) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping("/api/fire")
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
+    public ResponseEntity<?> fireAssistant(@RequestBody Hire hire) throws SQLException {
+        int result = userService.deleteHire(hire);
+        if(result != 1) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
