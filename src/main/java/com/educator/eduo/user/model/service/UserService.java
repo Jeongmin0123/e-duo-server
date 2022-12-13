@@ -10,4 +10,6 @@ public interface UserService {
     void updatePassword(User user) throws SQLException, UsernameNotFoundException;
 
     void insertHire(Hire hire) throws SQLException;
+
+    int updateHire(Hire hire);
 }

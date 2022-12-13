@@ -33,4 +33,6 @@ public interface UserMapper {
     int updateStudent(Student student) throws SQLException;
 
     void insertHire(Hire hire) throws SQLException;
+
+    int updateHire(Hire hire);
 }

@@ -39,13 +39,16 @@ public class UserServiceImpl implements UserService {
         userMapper.updateUser(selected);
     }
 
-
-
-
     @Override
     @Transactional
     public void insertHire(Hire hire) throws SQLException {
         userMapper.insertHire(hire);
         return;
+    }
+
+    @Override
+    @Transactional
+    public int updateHire(Hire hire) {
+        return userMapper.updateHire(hire);
     }
 }

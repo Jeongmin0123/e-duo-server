@@ -71,6 +71,12 @@
 		WHERE user_id=#{userId}
 	</update>
 
+	<update id="updateHire" parameterType="Hire">
+		UPDATE hire
+		SET state=#{state}
+		WHERE teacher_user_id=#{teacherUserId} and assistant_user_id=#{assistantUserId}
+	</update>
+
 <!--	<update id="updateAssistant" parameterType="Assistant">-->
 <!--		UPDATE assistant-->
 <!--		SET teacher_user_id=#{teacherUserId}-->
