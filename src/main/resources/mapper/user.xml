@@ -71,11 +71,11 @@
 		WHERE user_id=#{userId}
 	</update>
 
-	<update id="updateAssistant" parameterType="Assistant">
-		UPDATE assistant
-		SET teacher_user_id=#{teacherUserId}
-		WHERE user_id=#{userId}
-	</update>
+<!--	<update id="updateAssistant" parameterType="Assistant">-->
+<!--		UPDATE assistant-->
+<!--		SET teacher_user_id=#{teacherUserId}-->
+<!--		WHERE user_id=#{userId}-->
+<!--	</update>-->
 
 	<update id="updateStudent" parameterType="Student">
 		UPDATE student
