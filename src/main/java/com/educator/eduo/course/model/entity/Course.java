@@ -19,4 +19,5 @@ public class Course {
     private String academyAddress;
     private String startDate;
     private String endDate;
+    private String description;
 }

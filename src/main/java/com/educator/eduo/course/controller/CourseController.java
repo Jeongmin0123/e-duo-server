@@ -37,8 +37,8 @@ public class CourseController {
 
     @GetMapping("/api/teacher-courses")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
-    public ResponseEntity<?> teacherSchedule(@RequestBody String userId) throws NotFoundException {
-        List<CourseResultDto> courseResultList = courseService.selectTeacherSchedule(userId);
+    public ResponseEntity<?> teacherCourse(@RequestBody String userId) throws NotFoundException {
+        List<CourseResultDto> courseResultList = courseService.selectTeacherCourse(userId);
         return ResponseEntity.ok(courseResultList);
     }
 }

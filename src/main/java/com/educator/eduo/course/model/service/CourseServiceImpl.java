@@ -33,7 +33,7 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     @Transactional
-    public List<CourseResultDto> selectTeacherSchedule(String userId) throws NotFoundException{
+    public List<CourseResultDto> selectTeacherCourse(String userId) throws NotFoundException{
         List<CourseResultDto> courseResultList = courseMapper.selectTeacherCourseByCourseId(userId);
         logger.info("Teacher Schedule is : {}", courseResultList);
         if(courseResultList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
