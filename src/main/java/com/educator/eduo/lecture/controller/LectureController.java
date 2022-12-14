@@ -61,4 +61,5 @@ public class LectureController {
     		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     	}
     }
+    
 }
