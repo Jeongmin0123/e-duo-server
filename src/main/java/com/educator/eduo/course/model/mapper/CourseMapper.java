@@ -9,9 +9,9 @@ import java.util.List;
 
 @Mapper
 public interface CourseMapper {
-    List<CourseResultDto> selectTeacherCourseByCourseId(String userId);
-    List<CourseResultDto> selectAssistantCourseByCourseId(String userId);
-    List<CourseResultDto> selectStudentCourseByCourseId(String userId);
+    List<CourseResultDto> selectTeacherCourseByUserId(String userId);
+    List<CourseResultDto> selectAssistantCourseByUserId(String userId);
+    List<CourseResultDto> selectStudentCourseByUserId(String userId);
 
 
     List<ThisWeekScheduleDto> selectTeacherWeekScheduleByUserIdWithDate(ThisWeekRequestDto thisWeekRequestDto);
