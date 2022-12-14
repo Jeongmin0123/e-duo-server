@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.educator.eduo.course.model.mapper.CourseMapper">
+
+	<resultMap id="courseResult" type="com.educator.eduo.course.model.entity.Course">
+		<id property="courseId" column="course_id"/>
+		<result property="userId" column="user_id"/>
+		<result property="courseName" column="course_name"/>
+		<result property="academyName" column="academy_name"/>
+		<result property="academyAddress" column="academy_address"/>
+		<result property="startDate" column="start_date"/>
+		<result property="endDate" column="end_date"/>
+	</resultMap>
+	<resultMap id="scheduleResult" type="Schedule">
+		<id property="scheduleId" column="schedule_id"/>
+		<result property="courseId" column="course_id"/>
+		<result property="day" column="day"/>
+		<result property="startTime" column="start_time"/>
+		<result property="endTime" column="end_time"/>
+	</resultMap>
+
+	<resultMap id="teacherScheduleResult" type="CourseResultDto">
+		<association property="course" column="course_id" javaType="Course" resultMap="courseResult"/>
+		<collection property="scheduleList" column="course_id" javaType="java.util.ArrayList" resultMap="scheduleResult"/>
+	</resultMap>
+
+	<select id="selectTeacherCourseByCourseId" resultMap="teacherScheduleResult">
+		SELECT
+		c.course_id, c.user_id, c.course_name, c.academy_name, c.academy_address,
+		c.start_date, c.end_date, s.schedule_id, s.course_id, s.day, s.start_time, s.end_time
+		FROM course c JOIN schedule s ON c.course_id = s.course_id
+		where c.user_id = #{userID}
+	</select>
+</mapper>
