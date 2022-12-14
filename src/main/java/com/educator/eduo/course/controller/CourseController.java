@@ -35,23 +35,23 @@ public class CourseController {
         return ResponseEntity.ok(scheduleDtoList);
     }
 
-    @PostMapping("/api/teacher-courses")
+    @GetMapping("/api/teacher-courses")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
-    public ResponseEntity<?> teacherCourse(@RequestBody String userId) throws NotFoundException {
+    public ResponseEntity<?> teacherCourse(@RequestParam String userId) throws NotFoundException {
         List<CourseResultDto> courseResultList = courseService.selectTeacherCourse(userId);
         return ResponseEntity.ok(courseResultList);
     }
 
-    @PostMapping("/api/assistant-courses")
+    @GetMapping("/api/assistant-courses")
     @PreAuthorize("hasRole('ROLE_ASSISTANT')")
-    public ResponseEntity<?> assistantCourse(@RequestBody String userId) throws NotFoundException {
+    public ResponseEntity<?> assistantCourse(@RequestParam String userId) throws NotFoundException {
         List<CourseResultDto> courseResultList = courseService.selectAssistantCourse(userId);
         return ResponseEntity.ok(courseResultList);
     }
 
-    @PostMapping("/api/student-courses")
+    @GetMapping("/api/student-courses")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public ResponseEntity<?> studentCourse(@RequestBody String userId) throws NotFoundException {
+    public ResponseEntity<?> studentCourse(@RequestParam String userId) throws NotFoundException {
         List<CourseResultDto> courseResultList = courseService.selectStudentCourse(userId);
         return ResponseEntity.ok(courseResultList);
     }
