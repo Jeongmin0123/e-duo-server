@@ -48,4 +48,13 @@ public class CourseServiceImpl implements CourseService{
         if(courseResultList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
         return courseResultList;
     }
+
+    @Override
+    @Transactional
+    public List<CourseResultDto> selectStudentCourse(String userId) throws NotFoundException {
+        List<CourseResultDto> courseResultList  = courseMapper.selectStudentCourseByUserId(userId);
+        logger.info("Assistant Course with Schedule : {}", courseResultList);
+        if(courseResultList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
+        return courseResultList;
+    }
 }
