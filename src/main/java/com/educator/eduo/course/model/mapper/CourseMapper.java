@@ -15,4 +15,8 @@ public interface CourseMapper {
 
 
     List<ThisWeekScheduleDto> selectTeacherWeekScheduleByUserIdWithDate(ThisWeekRequestDto thisWeekRequestDto);
+
+    List<ThisWeekScheduleDto> selectAssistantWeekScheduleByUserIdWithDate(ThisWeekRequestDto thisWeekRequestDto);
+
+    List<ThisWeekScheduleDto> selectStudentWeekScheduleByUserIdWithDate(ThisWeekRequestDto thisWeekRequestDto);
 }

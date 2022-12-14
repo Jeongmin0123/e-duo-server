@@ -38,17 +38,33 @@
 		<collection property="scheduleList" column="course_id" javaType="java.util.ArrayList" resultMap="scheduleResult"/>
 	</resultMap>
 
-	<resultMap id="teacherThisWeekScheduleResult" type="ThisWeekScheduleDto">
+	<resultMap id="thisWeekScheduleResult" type="ThisWeekScheduleDto">
 		<id property="courseId" column="course_id"/>
 		<association property="course" column="course_id" javaType="Course" resultMap="courseResult"/>
 		<collection property="lectureList" column="lecture_id" javaType="java.util.ArrayList" resultMap="lectureResult"/>
 	</resultMap>
 
-	<select id="selectTeacherWeekScheduleByUserIdWithDate" parameterType="ThisWeekRequestDto" resultMap="teacherThisWeekScheduleResult">
-		SELECT c.course_id, c.user_id, c.course_name, c.academy_name, c.academy_address, c.start_date, c.end_date, c.description
+	<select id="selectTeacherWeekScheduleByUserIdWithDate" parameterType="ThisWeekRequestDto" resultMap="thisWeekScheduleResult">
+		SELECT c.course_id, c.user_id, c.course_name, c.academy_name, c.academy_address, c.start_date, c.end_date, c.description,
 		l.lecture_id, l.course_id, l.lecture_name, l.lecture_date, l.start_time, l.end_time, l.description, l.lecture_order
 		FROM course c JOIN lecture l ON c.course_id = l.course_id
-		WHERE c.user_id=#{userId} AND l.lecture_date BETWEEN date(#{monday}) AND date(#{sunday});
+		WHERE c.user_id=#{userId} AND l.lecture_date BETWEEN date(#{monday}) AND date(#{sunday})
+	</select>
+
+	<select id="selectAssistantWeekScheduleByUserIdWithDate" parameterType="ThisWeekRequestDto" resultMap="thisWeekScheduleResult">
+		SELECT c.course_id, c.user_id, c.course_name, c.academy_name, c.academy_address, c.start_date, c.end_date, c.description,
+		l.lecture_id, l.course_id, l.lecture_name, l.lecture_date, l.start_time, l.end_time, l.description, l.lecture_order
+		FROM course c JOIN management m ON c.course_id = m.course_id
+		JOIN lecture l ON l.course_id = m.course_id
+		WHERE m.user_id=#{userId} AND l.lecture_date BETWEEN date(#{monday}) AND date(#{sunday})
+	</select>
+
+	<select id="selectStudentWeekScheduleByUserIdWithDate" parameterType="ThisWeekRequestDto" resultMap="thisWeekScheduleResult">
+		SELECT c.course_id, c.user_id, c.course_name, c.academy_name, c.academy_address, c.start_date, c.end_date, c.description,
+		l.lecture_id, l.course_id, l.lecture_name, l.lecture_date, l.start_time, l.end_time, l.description, l.lecture_order
+		FROM course c JOIN sugang g ON c.course_id = g.course_id AND g.state='ACCEPTED'
+		JOIN lecture l ON l.course_id = g.course_id
+		WHERE g.user_id=#{userId} and l.lecture_date BETWEEN date(#{monday}) and date(#{sunday}) and g.start_date <![CDATA[ <= ]]> l.lecture_date
 	</select>
 
 	<select id="selectTeacherCourseByUserId" resultMap="courseWithSchedule">
@@ -63,7 +79,7 @@
 		s.schedule_id, s.course_id, s.day, s.start_time, s.end_time
 		FROM course c JOIN management m ON c.course_id = m.course_id
 		JOIN schedule s ON s.course_id = m.course_id
-		WHERE m.user_id=#{userId};
+		WHERE m.user_id=#{userId}
 	</select>
 
 	<select id="selectStudentCourseByUserId" resultMap="courseWithSchedule">
@@ -71,7 +87,7 @@
 		s.schedule_id, s.course_id, s.day, s.start_time, s.end_time
 		FROM course c JOIN sugang g ON c.course_id = g.course_id AND g.state='ACCEPTED'
 		JOIN schedule s ON s.course_id = g.course_id
-		WHERE g.user_id=#{userId};
+		WHERE g.user_id=#{userId}
 	</select>
 
 </mapper>
