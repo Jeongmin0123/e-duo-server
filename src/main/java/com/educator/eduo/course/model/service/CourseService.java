@@ -11,4 +11,6 @@ public interface CourseService {
     List<CourseResultDto> selectTeacherCourse(String userId) throws NotFoundException;
 
     List<ThisWeekScheduleDto> selectTeacherThisWeekSchedule(ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException;
+
+    List<CourseResultDto> selectAssistantCourse(String userId) throws NotFoundException;
 }
