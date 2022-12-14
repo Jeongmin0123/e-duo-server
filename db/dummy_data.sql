@@ -58,7 +58,7 @@ INSERT INTO `e_duo`.`management`(`course_id`, `user_id`) VALUES ('sadbiu1l2kjd51
 INSERT INTO `e_duo`.`sugang` (`user_id`, `course_id`, `start_date`, `state`) VALUES ('one@naver.com', 'tokenjdnbudolndsad-bfj1', '2022-09-25', 'ACCEPTED');
 INSERT INTO `e_duo`.`sugang` (`user_id`, `course_id`, `start_date`, `state`) VALUES ('one@naver.com', 'iqwybdjkwbid0-wqkdbqwjdqw', '2022-11-15', 'ACCEPTED');
 INSERT INTO `e_duo`.`sugang` (`user_id`, `course_id`, `start_date`, `state`) VALUES ('three@naver.com', 'yysndbzgql-subdqb-zbvkq', '2022-09-25', 'ACCEPTED');
-INSERT INTO `e_duo`.`sugang` (`user_id`, `course_id`, `start_date`, `state`) VALUES ('three@naver.com', 'iqwybdjkwbid0-wqkdbqwjdqw', '2022-11-02', 'ACCEPTED');
+INSERT INTO `e_duo`.`sugang` (`user_id`, `course_id`, `start_date`, `state`) VALUES ('three@naver.com', 'iqwybdjkwbid0-wqkdbqwjdqw', '2022-11-05', 'ACCEPTED');
 INSERT INTO `e_duo`.`sugang` (`user_id`, `course_id`, `start_date`, `state`) VALUES ('two@naver.com', 'iqwybdjkwbid0-wqkdbqwjdqw', '2022-12-15', 'ACCEPTED');
 INSERT INTO `e_duo`.`sugang` (`user_id`, `course_id`, `start_date`, `state`) VALUES ('two@naver.com', 'sadbiu1l2kjd51dwqp31', '2022-08-15', 'ACCEPTED');
 INSERT INTO `e_duo`.`sugang` (`user_id`, `course_id`, `start_date`, `state`) VALUES ('two@naver.com', 'tokenjdnbudolndsad-bfj1', '2022-09-25', 'ACCEPTED');
