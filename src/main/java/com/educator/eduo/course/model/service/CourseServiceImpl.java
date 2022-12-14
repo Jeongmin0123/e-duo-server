@@ -33,6 +33,24 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     @Transactional
+    public List<ThisWeekScheduleDto> selectAssistantThisWeekSchedule(ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException {
+        List<ThisWeekScheduleDto> scheduleDtoList = courseMapper.selectAssistantWeekScheduleByUserIdWithDate(thisWeekRequestDto);
+        logger.info("This Week Schedule : {} ", scheduleDtoList);
+        if(scheduleDtoList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
+        return scheduleDtoList;
+    }
+
+    @Override
+    @Transactional
+    public List<ThisWeekScheduleDto> selectStudentThisWeekSchedule(ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException {
+        List<ThisWeekScheduleDto> scheduleDtoList = courseMapper.selectStudentWeekScheduleByUserIdWithDate(thisWeekRequestDto);
+        logger.info("This Week Schedule : {} ", scheduleDtoList);
+        if(scheduleDtoList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
+        return scheduleDtoList;
+    }
+
+    @Override
+    @Transactional
     public List<CourseResultDto> selectTeacherCourse(String userId) throws NotFoundException{
         List<CourseResultDto> courseResultList = courseMapper.selectTeacherCourseByUserId(userId);
         logger.info("Teacher Schedule is : {}", courseResultList);

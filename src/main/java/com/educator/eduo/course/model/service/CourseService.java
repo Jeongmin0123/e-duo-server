@@ -8,11 +8,14 @@ import org.apache.ibatis.javassist.NotFoundException;
 import java.util.List;
 
 public interface CourseService {
-    List<CourseResultDto> selectTeacherCourse(String userId) throws NotFoundException;
-
     List<ThisWeekScheduleDto> selectTeacherThisWeekSchedule(ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException;
+    List<ThisWeekScheduleDto> selectAssistantThisWeekSchedule(ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException;
+    List<ThisWeekScheduleDto> selectStudentThisWeekSchedule(ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException;
+
+    List<CourseResultDto> selectTeacherCourse(String userId) throws NotFoundException;
 
     List<CourseResultDto> selectAssistantCourse(String userId) throws NotFoundException;
 
     List<CourseResultDto> selectStudentCourse(String userId) throws NotFoundException;
+
 }

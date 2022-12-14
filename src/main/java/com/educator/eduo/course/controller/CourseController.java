@@ -35,6 +35,22 @@ public class CourseController {
         return ResponseEntity.ok(scheduleDtoList);
     }
 
+    @PostMapping("/api/assistant-weekschedule")
+    @PreAuthorize("hasRole('ROLE_ASSISTANT')")
+    public ResponseEntity<?> assistantWeekSchedule(@RequestBody ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException {
+        logger.info("CourseController : {} ",thisWeekRequestDto);
+        List<ThisWeekScheduleDto> scheduleDtoList = courseService.selectAssistantThisWeekSchedule(thisWeekRequestDto);
+        return ResponseEntity.ok(scheduleDtoList);
+    }
+
+    @PostMapping("/api/student-weekschedule")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public ResponseEntity<?> studentWeekSchedule(@RequestBody ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException {
+        logger.info("CourseController : {} ",thisWeekRequestDto);
+        List<ThisWeekScheduleDto> scheduleDtoList = courseService.selectStudentThisWeekSchedule(thisWeekRequestDto);
+        return ResponseEntity.ok(scheduleDtoList);
+    }
+
     @GetMapping("/api/teacher-courses")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     public ResponseEntity<?> teacherCourse(@RequestParam String userId) throws NotFoundException {
