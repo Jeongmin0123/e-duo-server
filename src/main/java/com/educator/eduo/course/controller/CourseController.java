@@ -49,4 +49,10 @@ public class CourseController {
         return ResponseEntity.ok(courseResultList);
     }
 
+    @PostMapping("/api/student-courses")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public ResponseEntity<?> studentCourse(@RequestBody String userId) throws NotFoundException {
+        List<CourseResultDto> courseResultList = courseService.selectStudentCourse(userId);
+        return ResponseEntity.ok(courseResultList);
+    }
 }
