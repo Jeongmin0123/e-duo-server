@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS `e_duo`.`course` (
   `academy_address` VARCHAR(70) NULL DEFAULT NULL,
   `start_date` TIMESTAMP NOT NULL,
   `end_date` TIMESTAMP NULL,
+  `description` VARCHAR(200) NULL,
   PRIMARY KEY (`course_id`),
   INDEX `fk_course_teacher1_idx` (`user_id` ASC) ,
   CONSTRAINT `fk_course_teacher1`
@@ -113,9 +114,9 @@ CREATE TABLE IF NOT EXISTS `e_duo`.`lecture` (
   `description` VARCHAR(150) NULL,
   `lecture_order` VARCHAR(6) NULL,
   PRIMARY KEY (`lecture_id`),
-  INDEX `fk_lecture_subject1_idx` (`cousre_id` ASC) ,
+  INDEX `fk_lecture_subject1_idx` (`course_id` ASC) ,
   CONSTRAINT `fk_lecture_subject1`
-    FOREIGN KEY (`cousre_id`)
+    FOREIGN KEY (`course_id`)
     REFERENCES `e_duo`.`course` (`course_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
