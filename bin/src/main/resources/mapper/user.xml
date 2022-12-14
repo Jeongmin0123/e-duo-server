@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.educator.eduo.user.model.mapper.UserMapper">
+
+<!--	<select id="listUser" resultType="User">-->
+<!--		select username,password,email,domain,role from user-->
+<!--	</select>-->
+	<resultMap id="userResultMap" type="User">
+		<id column="user_id" property="userId"/>
+		<result column="password" property="password"/>
+		<result column="name" property="name"/>
+		<result column="phone" property="phone"/>
+		<result column="activated" property="activated"/>
+		<result column="role" property="role"/>
+		<result column="register_date" property="registerDate"/>
+	</resultMap>
+
+	<select id="selectUserByUserId" parameterType="string" resultMap="userResultMap">
+		SELECT user_id, name, phone, activated, role, register_date
+		FROM user
+		WHERE user_id = #{ userId }
+	</select>
+
+	<select id="loadUserByUsername" parameterType="map" resultMap="userResultMap">
+		SELECT user_id, password, name, activated, role
+		FROM user
+		WHERE user_id = #{ userId }
+	</select>
+
+	<select id="existsByUserId" parameterType="String" resultType="boolean">
+		SELECT IF(COUNT(*) = 1, 1, 0)
+		FROM user
+		WHERE user_id = #{userId}
+	</select>
+
+	<insert id="insertUser" parameterType="User">
+		INSERT INTO user (user_id, password, name, phone, role)
+		VALUES (#{ userId }, #{ password }, #{ name }, #{ phone }, #{ role })
+	</insert>
+
+	<insert id="insertTeacher" parameterType="Teacher">
+		INSERT INTO teacher (user_id, subject, image_src)
+		VALUES (#{ userId }, #{ subject }, #{ imageSrc })
+	</insert>
+
+	<insert id="insertAssistant" parameterType="Assistant">
+		INSERT INTO assistant (user_id)
+		VALUES (#{ userId })
+	</insert>
+	<insert id="insertHire" parameterType="Hire">
+		INSERT INTO hire (assistant_user_id, teacher_user_id)
+		VALUES (#{assistantUserId}, #{teacherUserId})
+	</insert>
+
+	<insert id="insertStudent" parameterType="Student">
+		INSERT INTO STUDENT(user_id, birth_date, school_name, grade, parent, parent_phone)
+		VALUES(#{userId}, #{birthDate}, #{schoolName}, #{grade}, #{parent}, #{parentPhone})
+	</insert>
+
+	<update id="updateUser" parameterType="User">
+		UPDATE user
+		SET password=#{password}, name=#{name}, phone=#{phone}
+		WHERE user_id=#{userId}
+	</update>
+
+	<update id="updateTeacher" parameterType="Teacher">
+		UPDATE teacher
+		SET  subject=#{subject}, image_src=#{imageSrc}
+		WHERE user_id=#{userId}
+	</update>
+
+<!--	<update id="updateAssistant" parameterType="Assistant">-->
+<!--		UPDATE assistant-->
+<!--		SET teacher_user_id=#{teacherUserId}-->
+<!--		WHERE user_id=#{userId}-->
+<!--	</update>-->
+
+	<update id="updateStudent" parameterType="Student">
+		UPDATE student
+		SET birth_date=#{birthDate}, school_name=#{schoolName}, grade=#{grade}, parent=#{parent}, parent_phone=#{parentPhone}
+		WHERE user_id=#{userId}
+	</update>
+
+<!--	<select id="existsByUsername" parameterType="string"-->
+<!--		resultType="int">-->
+<!--		select count(username)-->
+<!--		from user-->
+<!--		where username=#{username}-->
+<!--	</select>-->
+<!--	-->
+<!--	<select id="existsByEmail" parameterType="map" resultType="int">-->
+<!--		select count(username)-->
+<!--		from user-->
+<!--		where email=#{email} and domain=#{domain}-->
+<!--	</select>-->
+<!--	-->
+<!--	<insert id="save" parameterType="user">-->
+<!--		insert into user-->
+<!--		(username,password,email,domain,residence) values-->
+<!--		(#{username},#{password},#{email},#{domain},#{residence})-->
+<!--	</insert>-->
+<!--	<insert id="registerCategory" parameterType="map">-->
+<!--		insert into favoritecate (username,categoryCode)-->
+<!--		values-->
+<!--		<foreach collection="favoritecateDTOs" item="categoryCode" separator=",">-->
+<!--			(#{username},#{categoryCode})-->
+<!--		</foreach>-->
+<!--	</insert>-->
+<!--	-->
+<!--	-->
+<!--	<select id="getUserInfo" parameterType="string" resultType="MyPageDto">-->
+<!--		select u.username,u.email,u.domain,u.role,u.joinDate,u.residence,d.sidoName,d.gugunName,d.dongName from user u-->
+<!--		left outer join dongcode d  on u.residence = d.dongcode where username = #{username}-->
+<!--	</select>-->
+<!--	<select id="getUser" parameterType="string" resultType="user">-->
+<!--		select username,role-->
+<!--		 from user where username = #{username}-->
+<!--	</select>-->
+<!--	-->
+<!--	<update id="updateUser" parameterType="user">-->
+<!--		update user-->
+<!--		<trim prefix="set" suffixOverrides=",">-->
+<!--			<if test="password != null">password = #{password},</if>-->
+<!--			<if test="email != null">email = #{email},</if>-->
+<!--			<if test="domain != null">domain = #{domain},</if>-->
+<!--		</trim>-->
+<!--		where username = #{username}-->
+<!--	</update>-->
+<!--	-->
+<!--	<select id="findPassword" parameterType="string">-->
+<!--		select password user where username = #{username}-->
+<!--	</select>-->
+<!--	-->
+<!--	<select id="getUserDong" parameterType="String" resultType="FavoriteLoc">-->
+<!--		select f.username,f.dongCode,d.sidoName,d.gugunName,d.dongName -->
+<!--		from favoriteloc f left join dongcode d on d.dongCode = f.dongcode where username = #{username};-->
+<!--	</select>-->
+<!--	-->
+<!--	-->
+<!--	<select id="getUserKey" parameterType="string" resultType="FavoriteKey">-->
+<!--		select f.username,c.categoryCode, c.tag from -->
+<!--		favoritecate f right outer join category c on c.categoryCode = f.categoryCode -->
+<!--		where f.username = #{username};-->
+<!--	</select>-->
+
+</mapper>
