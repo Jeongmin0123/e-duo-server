@@ -32,7 +32,7 @@
 		<result property="lectureOrder" column="lecture_order"/>
 	</resultMap>
 
-	<resultMap id="courseWithSchedule" type="CourseResultDto">
+	<resultMap id="courseWithSchedule" type="CourseInfoDto">
 		<id property="courseId" column="course_id"/>
 		<association property="course" column="course_id" javaType="Course" resultMap="courseResult"/>
 		<collection property="scheduleList" column="course_id" javaType="java.util.ArrayList" resultMap="scheduleResult"/>

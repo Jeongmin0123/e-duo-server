@@ -1,6 +1,6 @@
 package com.educator.eduo.course.model.service;
 
-import com.educator.eduo.course.model.dto.CourseResultDto;
+import com.educator.eduo.course.model.dto.CourseInfoDto;
 import com.educator.eduo.course.model.dto.ThisWeekRequestDto;
 import com.educator.eduo.course.model.dto.ThisWeekScheduleDto;
 import com.educator.eduo.course.model.mapper.CourseMapper;
@@ -51,8 +51,8 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     @Transactional
-    public List<CourseResultDto> selectTeacherCourse(String userId) throws NotFoundException{
-        List<CourseResultDto> courseResultList = courseMapper.selectTeacherCourseByUserId(userId);
+    public List<CourseInfoDto> selectTeacherCourse(String userId) throws NotFoundException{
+        List<CourseInfoDto> courseResultList = courseMapper.selectTeacherCourseByUserId(userId);
         logger.info("Teacher Schedule is : {}", courseResultList);
         if(courseResultList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
         return courseResultList;
@@ -60,8 +60,8 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     @Transactional
-    public List<CourseResultDto> selectAssistantCourse(String userId) throws NotFoundException {
-        List<CourseResultDto> courseResultList  = courseMapper.selectAssistantCourseByUserId(userId);
+    public List<CourseInfoDto> selectAssistantCourse(String userId) throws NotFoundException {
+        List<CourseInfoDto> courseResultList  = courseMapper.selectAssistantCourseByUserId(userId);
         logger.info("Assistant Course with Schedule : {}", courseResultList);
         if(courseResultList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
         return courseResultList;
@@ -69,8 +69,8 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     @Transactional
-    public List<CourseResultDto> selectStudentCourse(String userId) throws NotFoundException {
-        List<CourseResultDto> courseResultList  = courseMapper.selectStudentCourseByUserId(userId);
+    public List<CourseInfoDto> selectStudentCourse(String userId) throws NotFoundException {
+        List<CourseInfoDto> courseResultList  = courseMapper.selectStudentCourseByUserId(userId);
         logger.info("Assistant Course with Schedule : {}", courseResultList);
         if(courseResultList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
         return courseResultList;

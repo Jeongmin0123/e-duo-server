@@ -1,10 +1,9 @@
 package com.educator.eduo.course.controller;
 
-import com.educator.eduo.course.model.dto.CourseResultDto;
+import com.educator.eduo.course.model.dto.CourseInfoDto;
 import com.educator.eduo.course.model.dto.ThisWeekRequestDto;
 import com.educator.eduo.course.model.dto.ThisWeekScheduleDto;
 import com.educator.eduo.course.model.service.CourseService;
-import lombok.SneakyThrows;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,21 +53,28 @@ public class CourseController {
     @GetMapping("/api/teacher-courses")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     public ResponseEntity<?> teacherCourse(@RequestParam String userId) throws NotFoundException {
-        List<CourseResultDto> courseResultList = courseService.selectTeacherCourse(userId);
+        List<CourseInfoDto> courseResultList = courseService.selectTeacherCourse(userId);
         return ResponseEntity.ok(courseResultList);
     }
 
     @GetMapping("/api/assistant-courses")
     @PreAuthorize("hasRole('ROLE_ASSISTANT')")
     public ResponseEntity<?> assistantCourse(@RequestParam String userId) throws NotFoundException {
-        List<CourseResultDto> courseResultList = courseService.selectAssistantCourse(userId);
+        List<CourseInfoDto> courseResultList = courseService.selectAssistantCourse(userId);
         return ResponseEntity.ok(courseResultList);
     }
 
     @GetMapping("/api/student-courses")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public ResponseEntity<?> studentCourse(@RequestParam String userId) throws NotFoundException {
-        List<CourseResultDto> courseResultList = courseService.selectStudentCourse(userId);
+        List<CourseInfoDto> courseResultList = courseService.selectStudentCourse(userId);
         return ResponseEntity.ok(courseResultList);
+    }
+
+    @PostMapping("/api/course")
+    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT')")
+    public ResponseEntity<?> registerCourse(@RequestBody CourseInfoDto courseInfoDto) {
+        logger.info("registerCourse : {} ",courseInfoDto);
+        return ResponseEntity.ok("WW");
     }
 }
