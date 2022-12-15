@@ -71,4 +71,5 @@ public class LectureController {
     	List<LectureResultDto> lectureResultList = lectureService.selectAllLecture(courseId);
     	return new ResponseEntity<>(lectureResultList, HttpStatus.OK);
     }
+    
 }
