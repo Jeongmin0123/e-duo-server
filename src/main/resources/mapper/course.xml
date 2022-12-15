@@ -29,10 +29,12 @@
 		<result property="startTime" column="start_time"/>
 		<result property="endTime" column="end_time"/>
 		<result property="description" column="description"/>
-		<result property="lectureOrder" column="lecture_order"/>
+		<result property="existAssignment" column="exist_assignment" />
+		<result property="existTest" column="exist_test" />
+		<result property="testType" column="test_type" />
 	</resultMap>
 
-	<resultMap id="courseWithSchedule" type="CourseResultDto">
+	<resultMap id="courseWithSchedule" type="CourseInfoDto">
 		<id property="courseId" column="course_id"/>
 		<association property="course" column="course_id" javaType="Course" resultMap="courseResult"/>
 		<collection property="scheduleList" column="course_id" javaType="java.util.ArrayList" resultMap="scheduleResult"/>
@@ -46,14 +48,14 @@
 
 	<select id="selectTeacherWeekScheduleByUserIdWithDate" parameterType="ThisWeekRequestDto" resultMap="thisWeekScheduleResult">
 		SELECT c.course_id, c.user_id, c.course_name, c.academy_name, c.academy_address, c.start_date, c.end_date, c.description,
-		l.lecture_id, l.course_id, l.lecture_name, l.lecture_date, l.start_time, l.end_time, l.description, l.lecture_order
+		l.lecture_id, l.course_id, l.lecture_name, l.lecture_date, l.start_time, l.end_time, l.description, l.exist_assignment, l.exist_test, l.test_type
 		FROM course c JOIN lecture l ON c.course_id = l.course_id
 		WHERE c.user_id=#{userId} AND l.lecture_date BETWEEN date(#{monday}) AND date(#{sunday})
 	</select>
 
 	<select id="selectAssistantWeekScheduleByUserIdWithDate" parameterType="ThisWeekRequestDto" resultMap="thisWeekScheduleResult">
 		SELECT c.course_id, c.user_id, c.course_name, c.academy_name, c.academy_address, c.start_date, c.end_date, c.description,
-		l.lecture_id, l.course_id, l.lecture_name, l.lecture_date, l.start_time, l.end_time, l.description, l.lecture_order
+		l.lecture_id, l.course_id, l.lecture_name, l.lecture_date, l.start_time, l.end_time, l.description, l.exist_assignment, l.exist_test, l.test_type
 		FROM course c JOIN management m ON c.course_id = m.course_id
 		JOIN lecture l ON l.course_id = m.course_id
 		WHERE m.user_id=#{userId} AND l.lecture_date BETWEEN date(#{monday}) AND date(#{sunday})
@@ -61,7 +63,7 @@
 
 	<select id="selectStudentWeekScheduleByUserIdWithDate" parameterType="ThisWeekRequestDto" resultMap="thisWeekScheduleResult">
 		SELECT c.course_id, c.user_id, c.course_name, c.academy_name, c.academy_address, c.start_date, c.end_date, c.description,
-		l.lecture_id, l.course_id, l.lecture_name, l.lecture_date, l.start_time, l.end_time, l.description, l.lecture_order
+		l.lecture_id, l.course_id, l.lecture_name, l.lecture_date, l.start_time, l.end_time, l.description, l.exist_assignment, l.exist_test, l.test_type
 		FROM course c JOIN sugang g ON c.course_id = g.course_id AND g.state='ACCEPTED'
 		JOIN lecture l ON l.course_id = g.course_id
 		WHERE g.user_id=#{userId} and l.lecture_date BETWEEN date(#{monday}) and date(#{sunday}) and g.start_date <![CDATA[ <= ]]> l.lecture_date
@@ -90,4 +92,24 @@
 		WHERE g.user_id=#{userId}
 	</select>
 
+
+	<insert id="insertCourse" parameterType="Course">
+		INSERT INTO course( course_id, user_id, course_name, academy_name, academy_address, start_date, end_date, description)
+		VALUES(
+			concat((select LEFT(subject, 1) FROM teacher where user_id=#{userId}), #{courseId})
+		, #{userId}, #{courseName}, #{academyName}, #{academyAddress}, #{startDate} ,#{endDate} ,#{description})
+		<selectKey keyColumn="course_id" keyProperty="courseId" resultType="java.lang.String" order="AFTER">
+			SELECT course_id
+			FROM course
+			WHERE course_id LIKE CONCAT('%', #{courseId})
+		</selectKey>
+	</insert>
+
+	<insert id="insertSchedules" parameterType="java.util.List">
+		INSERT INTO schedule( course_id, day, start_time, end_time )
+		VALUES
+		<foreach collection="list" item="item" separator=",">
+			(#{item.courseId}, #{item.day}, #{item.startTime}, #{item.endTime})
+		</foreach>
+	</insert>
 </mapper>

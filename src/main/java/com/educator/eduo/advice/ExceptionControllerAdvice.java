@@ -44,8 +44,6 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e) {
         e.printStackTrace();
-        // 추후 삭제 필요!!!!!
-        System.out.println("ADVICE CONTROLLER!!!!!!! SSSSSSSSSSSSS");
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

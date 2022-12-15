@@ -17,5 +17,7 @@ public class Lecture {
 	private String startTime;
 	private String endTime;
 	private String description;
-	private String lectureOrder;
+	private boolean existAssignment;
+	private boolean existTest;
+	private String testType;
 }

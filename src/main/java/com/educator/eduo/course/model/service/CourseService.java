@@ -1,21 +1,20 @@
 package com.educator.eduo.course.model.service;
 
-import com.educator.eduo.course.model.dto.CourseResultDto;
+import com.educator.eduo.course.model.dto.CourseInfoDto;
+import com.educator.eduo.course.model.dto.CourseRegisterDto;
 import com.educator.eduo.course.model.dto.ThisWeekRequestDto;
 import com.educator.eduo.course.model.dto.ThisWeekScheduleDto;
 import org.apache.ibatis.javassist.NotFoundException;
 
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.List;
 
 public interface CourseService {
-    List<ThisWeekScheduleDto> selectTeacherThisWeekSchedule(ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException;
-    List<ThisWeekScheduleDto> selectAssistantThisWeekSchedule(ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException;
-    List<ThisWeekScheduleDto> selectStudentThisWeekSchedule(ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException;
 
-    List<CourseResultDto> selectTeacherCourse(String userId) throws NotFoundException;
+    List<CourseInfoDto> selectCourseByCourseId(String userId, String role) throws NotFoundException, SQLException;
 
-    List<CourseResultDto> selectAssistantCourse(String userId) throws NotFoundException;
+    List<ThisWeekScheduleDto> selectThisWeekSchedule(ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException, SQLException;
 
-    List<CourseResultDto> selectStudentCourse(String userId) throws NotFoundException;
-
+    void registerCourse(CourseRegisterDto courseRegisterDto) throws SQLException;
 }
