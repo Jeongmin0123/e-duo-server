@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,57 +23,35 @@ public class CourseServiceImpl implements CourseService{
     public CourseServiceImpl(CourseMapper courseMapper) {
         this.courseMapper = courseMapper;
     }
+
     @Override
     @Transactional
-    public List<ThisWeekScheduleDto> selectTeacherThisWeekSchedule(ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException {
-        List<ThisWeekScheduleDto> scheduleDtoList = courseMapper.selectTeacherWeekScheduleByUserIdWithDate(thisWeekRequestDto);
-        logger.info("This Week Schedule : {} ", scheduleDtoList);
-        if(scheduleDtoList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
-        return scheduleDtoList;
+    public List<ThisWeekScheduleDto> selectThisWeekSchedule(ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException {
+        List<ThisWeekScheduleDto> scheduleList = new ArrayList<>();
+        String role = thisWeekRequestDto.getRole();
+        if(role.equals("ROLE_TEACHER")) {
+            scheduleList = courseMapper.selectTeacherWeekScheduleByUserIdWithDate(thisWeekRequestDto);
+        } else if(role.equals("ROLE_ASSISTANT")) {
+            scheduleList = courseMapper.selectAssistantWeekScheduleByUserIdWithDate(thisWeekRequestDto);
+        } else if(role.equals("ROLE_STUDENT")) {
+            scheduleList = courseMapper.selectStudentWeekScheduleByUserIdWithDate(thisWeekRequestDto);
+        }
+        if(scheduleList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
+        return scheduleList;
     }
 
     @Override
     @Transactional
-    public List<ThisWeekScheduleDto> selectAssistantThisWeekSchedule(ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException {
-        List<ThisWeekScheduleDto> scheduleDtoList = courseMapper.selectAssistantWeekScheduleByUserIdWithDate(thisWeekRequestDto);
-        logger.info("This Week Schedule : {} ", scheduleDtoList);
-        if(scheduleDtoList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
-        return scheduleDtoList;
-    }
-
-    @Override
-    @Transactional
-    public List<ThisWeekScheduleDto> selectStudentThisWeekSchedule(ThisWeekRequestDto thisWeekRequestDto) throws NotFoundException {
-        List<ThisWeekScheduleDto> scheduleDtoList = courseMapper.selectStudentWeekScheduleByUserIdWithDate(thisWeekRequestDto);
-        logger.info("This Week Schedule : {} ", scheduleDtoList);
-        if(scheduleDtoList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
-        return scheduleDtoList;
-    }
-
-    @Override
-    @Transactional
-    public List<CourseInfoDto> selectTeacherCourse(String userId) throws NotFoundException{
-        List<CourseInfoDto> courseResultList = courseMapper.selectTeacherCourseByUserId(userId);
-        logger.info("Teacher Schedule is : {}", courseResultList);
-        if(courseResultList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
-        return courseResultList;
-    }
-
-    @Override
-    @Transactional
-    public List<CourseInfoDto> selectAssistantCourse(String userId) throws NotFoundException {
-        List<CourseInfoDto> courseResultList  = courseMapper.selectAssistantCourseByUserId(userId);
-        logger.info("Assistant Course with Schedule : {}", courseResultList);
-        if(courseResultList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
-        return courseResultList;
-    }
-
-    @Override
-    @Transactional
-    public List<CourseInfoDto> selectStudentCourse(String userId) throws NotFoundException {
-        List<CourseInfoDto> courseResultList  = courseMapper.selectStudentCourseByUserId(userId);
-        logger.info("Assistant Course with Schedule : {}", courseResultList);
-        if(courseResultList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
-        return courseResultList;
+    public List<CourseInfoDto> selectCourseByCourseId(String userId, String role) throws NotFoundException {
+        List<CourseInfoDto> courseInfoList = new ArrayList<>();
+        if(role.equals("ROLE_TEACHER")) {
+            courseInfoList = courseMapper.selectTeacherCourseByUserId(userId);
+        } else if(role.equals("ROLE_ASSISTANT")) {
+            courseInfoList = courseMapper.selectAssistantCourseByUserId(userId);
+        } else if(role.equals("ROLE_STUDENT")) {
+            courseInfoList = courseMapper.selectStudentCourseByUserId(userId);
+        }
+        if(courseInfoList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
+        return courseInfoList;
     }
 }
