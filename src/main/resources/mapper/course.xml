@@ -92,4 +92,24 @@
 		WHERE g.user_id=#{userId}
 	</select>
 
+
+	<insert id="insertCourse" parameterType="Course">
+		INSERT INTO course( course_id, user_id, course_name, academy_name, academy_address, start_date, end_date, description)
+		VALUES(
+			concat((select LEFT(subject, 1) FROM teacher where user_id=#{userId}), #{courseId})
+		, #{userId}, #{courseName}, #{academyName}, #{academyAddress}, #{startDate} ,#{endDate} ,#{description})
+		<selectKey keyColumn="course_id" keyProperty="courseId" resultType="java.lang.String" order="AFTER">
+			SELECT course_id
+			FROM course
+			WHERE course_id LIKE CONCAT('%', #{courseId})
+		</selectKey>
+	</insert>
+
+	<insert id="insertSchedules" parameterType="java.util.List">
+		INSERT INTO schedule( course_id, day, start_time, end_time )
+		VALUES
+		<foreach collection="list" item="item" separator=",">
+			(#{item.courseId}, #{item.day}, #{item.startTime}, #{item.endTime})
+		</foreach>
+	</insert>
 </mapper>

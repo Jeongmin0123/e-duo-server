@@ -1,6 +1,7 @@
 package com.educator.eduo.lecture.model.mapper;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -15,4 +16,5 @@ public interface LectureMapper {
 
 	boolean deleteLecture(String lectureId) throws SQLException;
 
+	void insertAllLecture(List<Lecture> lectureList) throws SQLException;
 }
