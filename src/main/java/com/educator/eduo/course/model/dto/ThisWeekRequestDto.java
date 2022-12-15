@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ThisWeekRequestDto {
     private String userId;
+    private String role;
     private String monday;
     private String sunday;
 }
