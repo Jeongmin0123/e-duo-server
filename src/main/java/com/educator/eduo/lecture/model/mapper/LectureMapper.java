@@ -1,9 +1,12 @@
 package com.educator.eduo.lecture.model.mapper;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.javassist.NotFoundException;
 
+import com.educator.eduo.lecture.model.dto.LectureResultDto;
 import com.educator.eduo.lecture.model.entity.Lecture;
 
 @Mapper
@@ -14,5 +17,7 @@ public interface LectureMapper {
 	boolean updateLecture(Lecture lecture) throws SQLException;
 
 	boolean deleteLecture(String lectureId) throws SQLException;
+
+	List<LectureResultDto> selectAllLecture(String courseId) throws NotFoundException;
 
 }

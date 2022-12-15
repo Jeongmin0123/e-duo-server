@@ -14,10 +14,6 @@
 		<result property="description" column="description"/>
 		<result property="lectureOrder" column="lecture_order"/>
 	</resultMap>
-	
-	<resultMap id="lectureAllResult" type="LectureResultDto">
-		<association property="lecture" column="lecture_id" javaType="Lecture" resultMap="lectureResult"/>
-	</resultMap>
 
 	<insert id="insertLecture" parameterType="Lecture">
 		INSERT INTO lecture (lecture_name, lecture_date, start_time, end_time, description, lecture_order)
@@ -53,9 +49,4 @@
 		DELETE FROM lecture
 		where lecture_id = #{lectureId};
 	</delete>
-	<select id="selectAllLecture" parameterType="string" resultMap="lectureAllResult">
-		SELECT lecture_id, course_id, lecture_name, lecture_date, start_time, end_time, description, lecture_order
-		FROM lecture
-		where lecture_id Like CONCAT('%', #{courseId}, '%');
-	</select>
 </mapper>
