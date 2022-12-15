@@ -1,4 +1,4 @@
-package com.educator.eduo.sugang.model.entity;
+package com.educator.eduo.sugang.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Sugang {
+public class SugangRequestDto {
 	private String userId;
 	private String courseId;
-	private String startDate;
-	private String endDate;
-	private String state;
 }

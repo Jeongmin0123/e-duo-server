@@ -4,20 +4,17 @@
 
 <mapper namespace="com.educator.eduo.lecture.model.mapper.LectureMapper">
 
-	<resultMap id="lectureResult" type="com.educator.eduo.lecture.model.entity.Lecture">
-		<id property="lectureId" column="lecture_id"/>
+	<resultMap id="SugangResult" type="com.educator.eduo.sugang.model.entity.Sugang">
+		<result property="userId" column="user_id"/>
 		<result property="courseId" column="course_id"/>
-		<result property="lectureName" column="lecture_name"/>
-		<result property="lectureDate" column="lecture_date"/>
 		<result property="startTime" column="start_time"/>
 		<result property="endTime" column="end_time"/>
-		<result property="description" column="description"/>
-		<result property="lectureOrder" column="lecture_order"/>
+		<result property="state" column="state"/>
 	</resultMap>
 
-	<insert id="insertLecture" parameterType="Lecture">
-		INSERT INTO lecture (lecture_name, lecture_date, start_time, end_time, description, lecture_order)
-		VALUES (#{lectureName}, #{lectureDate}, #{startTime}, #{endTime}, #{description}, #{lectureOrder})
+	<insert id="insertSugang" parameterType="Sugang">
+		INSERT INTO lecture (user_id, course_id, start_date)
+		VALUES (#{userId}, #{courseId}, sysdate())
 	</insert>
 
 	<update id="updateLecture" parameterType="Lecture">
