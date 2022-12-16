@@ -40,5 +40,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 	public boolean updateAssignment(Attendance attendance) throws SQLException {
 		return attendanceMapper.updateAssignment(attendance);
 	}
-
+	@Override
+	public boolean updatetestScore(Attendance attendance) throws SQLException {
+		return attendanceMapper.updatetestScore(attendance);
+	}
 }

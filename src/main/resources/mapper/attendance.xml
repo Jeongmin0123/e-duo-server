@@ -33,7 +33,7 @@
 		WHERE lecture_id = #{lectureId} and student_id = #{studentId};
 	</update>
 	
-	<update id="updateAttendance" parameterType="Attendance">
+	<update id="updateAssignment" parameterType="Attendance">
 		UPDATE attendance
 		<set>
 			<if test="assignment == 0">
@@ -43,6 +43,12 @@
 				assignment = #{assignment}
 			</if>
 		</set>
+		WHERE lecture_id = #{lectureId} and student_id = #{studentId};
+	</update>
+	
+	<update id="updateTestScore" parameterType="Attendance">
+		UPDATE attendance
+		SET test_score = #{testScore}
 		WHERE lecture_id = #{lectureId} and student_id = #{studentId};
 	</update>
 </mapper>

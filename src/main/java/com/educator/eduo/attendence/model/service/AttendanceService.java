@@ -16,4 +16,6 @@ public interface AttendanceService {
 
 	boolean updateAssignment(Attendance attendance) throws SQLException;
 
+	boolean updatetestScore(Attendance attendance) throws SQLException;
+
 }
