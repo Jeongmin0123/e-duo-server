@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.educator.eduo.lecture.model.mapper.LectureMapper">
+
+	<resultMap id="SugangResult" type="com.educator.eduo.sugang.model.entity.Sugang">
+		<result property="userId" column="user_id"/>
+		<result property="courseId" column="course_id"/>
+		<result property="startTime" column="start_time"/>
+		<result property="endTime" column="end_time"/>
+		<result property="state" column="state"/>
+	</resultMap>
+
+	<insert id="insertSugang" parameterType="Sugang">
+		INSERT INTO lecture (user_id, course_id, start_date)
+		VALUES (#{userId}, #{courseId}, sysdate())
+	</insert>
+
+	<update id="updateLecture" parameterType="Lecture">
+		UPDATE lecture
+		<set>
+			<if test="lectureName != null">
+				lecture_name = #{lectureName},
+			</if>
+			<if test="lectureDate != null">
+				lecture_date = #{lectureDate},
+			</if>
+			<if test="startTime != null">
+				start_time = #{startTime},
+			</if>
+			<if test="endTime != null">
+				end_time = #{endTime},
+			</if>
+			<if test="description != null">
+				description = #{description},
+			</if>
+			<if test="lectureOrder != null">
+				lecture_order = {lectureOrder}
+			</if>
+		</set>
+		WHERE lecture_id = #{lectureId};
+	</update>
+	
+	<delete id="deleteLecture" parameterType="string">
+		DELETE FROM lecture
+		where lecture_id = #{lectureId};
+	</delete>
+</mapper>
