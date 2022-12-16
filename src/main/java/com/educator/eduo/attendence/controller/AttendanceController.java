@@ -50,4 +50,14 @@ public class AttendanceController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 	}
+	
+	@PutMapping("/api/assignment")
+	@PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT')")
+	public ResponseEntity<?> updateAssignment(@RequestBody Attendance attendance) throws SQLException {
+		if(!attendanceService.updateAssignment(attendance)) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+	}
 }

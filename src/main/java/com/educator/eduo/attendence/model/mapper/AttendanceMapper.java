@@ -14,4 +14,6 @@ public interface AttendanceMapper {
 
 	boolean updateAttendance(Attendance attendance) throws SQLException;
 
+	boolean updateAssignment(Attendance attendance) throws SQLException;
+
 }

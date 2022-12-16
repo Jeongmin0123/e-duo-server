@@ -27,9 +27,22 @@
 		where a.lecture_id = #{lectureId};
 	</select>
 	
-	<update id="updateAttendance">
+	<update id="updateAttendance" parameterType="Attendance">
 		UPDATE attendance
 		SET check_in = #{checkIn}
+		WHERE lecture_id = #{lectureId} and student_id = #{studentId};
+	</update>
+	
+	<update id="updateAttendance" parameterType="Attendance">
+		UPDATE attendance
+		<set>
+			<if test="assignment == 0">
+				assignment = #{assignment}, done_date = sysdate()
+			</if>
+			<if test="">
+				assignment = #{assignment}
+			</if>
+		</set>
 		WHERE lecture_id = #{lectureId} and student_id = #{studentId};
 	</update>
 </mapper>
