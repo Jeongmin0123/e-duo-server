@@ -1,4 +1,4 @@
-package com.educator.eduo.course.model.entity;
+package com.educator.eduo.course.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,13 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Lecture {
-    private String lectureId;
+public class ScheduleRegisterDto {
     private String courseId;
-    private String lectureName;
-    private String lectureDate;
+    private int day;
     private String startTime;
     private String endTime;
-    private String description;
-    private String lectureOrder;
+    private boolean existAssignment;
+    private boolean existTest;
+    private String testType;
 }

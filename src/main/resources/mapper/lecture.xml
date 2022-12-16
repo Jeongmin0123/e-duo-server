@@ -58,4 +58,13 @@
 		FROM lecture
 		where lecture_id Like CONCAT('%', #{courseId}, '%');
 	</select>
+
+	<insert id="insertAllLecture" parameterType="java.util.List">
+		INSERT INTO lecture( course_id, lecture_name, lecture_date, start_time, end_time, description, exist_assignment, exist_test, test_type)
+		VALUES
+		<foreach collection="list" item="item" separator=",">
+			( #{item.courseId}, #{item.lectureName}, #{item.lectureDate}, #{item.startTime}, #{item.endTime}, #{item.description},
+			#{item.existAssignment}, #{item.existTest}, #{item.testType})
+		</foreach>
+	</insert>
 </mapper>

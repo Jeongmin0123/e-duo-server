@@ -1,8 +1,6 @@
 package com.educator.eduo.course.model.dto;
 
 import com.educator.eduo.course.model.entity.Course;
-import com.educator.eduo.lecture.model.entity.Lecture;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,9 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ThisWeekScheduleDto {
-    @JsonIgnore
-    private String courseId;
+public class CourseRegisterDto {
     private Course course;
-    private List<Lecture> lectureList;
+    private List<ScheduleRegisterDto> scheduleList;
 }

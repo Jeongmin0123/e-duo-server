@@ -80,13 +80,14 @@ DEFAULT CHARACTER SET = utf8mb4;
 DROP TABLE IF EXISTS `e_duo`.`course` ;
 
 CREATE TABLE IF NOT EXISTS `e_duo`.`course` (
-  `course_id` VARCHAR(60) NOT NULL,
+  `course_id` VARCHAR(18) NOT NULL,
   `user_id` VARCHAR(20) NOT NULL,
   `course_name` VARCHAR(50) NOT NULL,
   `academy_name` VARCHAR(45) NULL DEFAULT NULL,
   `academy_address` VARCHAR(70) NULL DEFAULT NULL,
-  `start_date` TIMESTAMP NOT NULL,
+  `start_date` TIMESTAMP NULL,
   `end_date` TIMESTAMP NULL,
+  `description` VARCHAR(200) NULL,
   PRIMARY KEY (`course_id`),
   INDEX `fk_course_teacher1_idx` (`user_id` ASC) ,
   CONSTRAINT `fk_course_teacher1`
@@ -104,18 +105,20 @@ DEFAULT CHARACTER SET = utf8mb4;
 DROP TABLE IF EXISTS `e_duo`.`lecture` ;
 
 CREATE TABLE IF NOT EXISTS `e_duo`.`lecture` (
-  `lecture_id` VARCHAR(65) NOT NULL,
-  `course_id` VARCHAR(60) NOT NULL,
+  `lecture_id` INT NOT NULL AUTO_INCREMENT,
+  `course_id` VARCHAR(18) NOT NULL,
   `lecture_name` VARCHAR(50) NOT NULL,
-  `lecture_date` TIMESTAMP NULL DEFAULT NULL,
+  `lecture_date` TIMESTAMP NULL,
   `start_time` TIME NULL,
   `end_time` TIME NULL,
   `description` VARCHAR(150) NULL,
-  `lecture_order` VARCHAR(6) NULL,
+  `exist_assignment` TINYINT(1) NULL DEFAULT 0,
+  `exist_test` TINYINT(1) NULL DEFAULT 0,
+  `test_type` ENUM('REVIEW', 'SUMMARY') NULL,
   PRIMARY KEY (`lecture_id`),
-  INDEX `fk_lecture_subject1_idx` (`cousre_id` ASC) ,
-  CONSTRAINT `fk_lecture_subject1`
-    FOREIGN KEY (`cousre_id`)
+  INDEX `fk_lecture_course1_idx` (`course_id` ASC) ,
+  CONSTRAINT `fk_lecture_course1`
+    FOREIGN KEY (`course_id`)
     REFERENCES `e_duo`.`course` (`course_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -130,7 +133,7 @@ DROP TABLE IF EXISTS `e_duo`.`student` ;
 
 CREATE TABLE IF NOT EXISTS `e_duo`.`student` (
   `user_id` VARCHAR(20) NOT NULL,
-  `birth_date` TIMESTAMP NULL DEFAULT NULL,
+  `birth_date` TIMESTAMP NULL,
   `school_name` VARCHAR(45) NOT NULL,
   `grade` INT NOT NULL,
   `parent` VARCHAR(1) NOT NULL,
@@ -154,10 +157,11 @@ DROP TABLE IF EXISTS `e_duo`.`attendance` ;
 CREATE TABLE IF NOT EXISTS `e_duo`.`attendance` (
   `attendance_id` INT(11) NOT NULL AUTO_INCREMENT,
   `user_id` VARCHAR(20) NOT NULL,
-  `lecture_id` VARCHAR(65) NOT NULL,
-  `assignment` INT(1) NULL DEFAULT NULL,
+  `lecture_id` INT NOT NULL,
+  `assignment` INT(1) NULL,
   `done_date` TIMESTAMP NULL,
   `check_in` TINYINT NULL DEFAULT 0,
+  `test_score` INT NULL,
   PRIMARY KEY (`attendance_id`),
   INDEX `fk_attendance_lecture1_idx` (`lecture_id` ASC) ,
   INDEX `fk_attendance_student1_idx` (`user_id` ASC) ,
@@ -182,17 +186,10 @@ DROP TABLE IF EXISTS `e_duo`.`exam` ;
 
 CREATE TABLE IF NOT EXISTS `e_duo`.`exam` (
   `exam_id` INT NOT NULL AUTO_INCREMENT,
-  `type` ENUM('REVIEW', 'MOCK', 'MIDTERM', 'FINAL') NULL,
-  `exam_date` TIMESTAMP NULL,
+  `type` ENUM('MOCK', 'MIDTERM', 'FINAL', 'SAT') NULL,
   `exam_name` VARCHAR(60) NULL,
-  `course_id` VARCHAR(60) NOT NULL,
-  PRIMARY KEY (`exam_id`),
-  INDEX `fk_exam_course1_idx` (`course_id` ASC) ,
-  CONSTRAINT `fk_exam_course1`
-    FOREIGN KEY (`course_id`)
-    REFERENCES `e_duo`.`course` (`course_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  `exam_date` TIMESTAMP NULL,
+  PRIMARY KEY (`exam_id`))
 ENGINE = InnoDB;
 
 
@@ -249,7 +246,7 @@ DROP TABLE IF EXISTS `e_duo`.`management` ;
 
 CREATE TABLE IF NOT EXISTS `e_duo`.`management` (
   `management_id` INT NOT NULL AUTO_INCREMENT,
-  `course_id` VARCHAR(60) NOT NULL,
+  `course_id` VARCHAR(18) NOT NULL,
   `user_id` VARCHAR(20) NOT NULL,
   PRIMARY KEY (`management_id`),
   INDEX `fk_management_course1_idx` (`course_id` ASC) ,
@@ -274,8 +271,8 @@ DROP TABLE IF EXISTS `e_duo`.`sugang` ;
 
 CREATE TABLE IF NOT EXISTS `e_duo`.`sugang` (
   `user_id` VARCHAR(20) NOT NULL,
-  `course_id` VARCHAR(60) NOT NULL,
-  `start_date` TIMESTAMP NOT NULL,
+  `course_id` VARCHAR(18) NOT NULL,
+  `start_date` TIMESTAMP NULL,
   `end_date` TIMESTAMP NULL,
   `state` ENUM('ACCEPTED', 'WAIT', 'QUIT') NULL DEFAULT 'WAIT',
   INDEX `fk_sugang_course1_idx` (`course_id` ASC) ,
@@ -344,7 +341,7 @@ DROP TABLE IF EXISTS `e_duo`.`video` ;
 
 CREATE TABLE IF NOT EXISTS `e_duo`.`video` (
   `video_id` INT NOT NULL,
-  `lecture_id` VARCHAR(65) NOT NULL,
+  `lecture_id` INT NOT NULL,
   PRIMARY KEY (`video_id`),
   INDEX `fk_video_lecture1_idx` (`lecture_id` ASC) ,
   CONSTRAINT `fk_video_lecture1`
