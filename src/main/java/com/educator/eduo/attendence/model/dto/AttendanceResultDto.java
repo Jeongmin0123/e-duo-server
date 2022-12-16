@@ -13,9 +13,10 @@ public class AttendanceResultDto {
 	private String attendanceId;
 	private String lectureId;
 	private String studentId;
+	private String schoolName;
+	private String checkIn;
 	private String studentName;
 	private String assignment;
 	private String doneDate;
 	private String testScore;
-	private String checkIn;
 }
