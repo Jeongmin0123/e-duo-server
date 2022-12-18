@@ -1,4 +1,4 @@
-package com.educator.eduo.attendence.controller;
+package com.educator.eduo.attendance.controller;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.educator.eduo.attendence.model.dto.AttendanceResultDto;
-import com.educator.eduo.attendence.model.entity.Attendance;
-import com.educator.eduo.attendence.model.service.AttendanceService;
+import com.educator.eduo.attendance.model.dto.AttendanceResultDto;
+import com.educator.eduo.attendance.model.entity.Attendance;
+import com.educator.eduo.attendance.model.service.AttendanceService;
 
 @RestController
 @CrossOrigin("*")

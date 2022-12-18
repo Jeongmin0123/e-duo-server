@@ -1,4 +1,4 @@
-package com.educator.eduo.attendence.model.service;
+package com.educator.eduo.attendance.model.service;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.educator.eduo.attendence.model.dto.AttendanceResultDto;
-import com.educator.eduo.attendence.model.entity.Attendance;
-import com.educator.eduo.attendence.model.mapper.AttendanceMapper;
+import com.educator.eduo.attendance.model.dto.AttendanceResultDto;
+import com.educator.eduo.attendance.model.entity.Attendance;
+import com.educator.eduo.attendance.model.mapper.AttendanceMapper;
 
 @Service
 public class AttendanceServiceImpl implements AttendanceService {

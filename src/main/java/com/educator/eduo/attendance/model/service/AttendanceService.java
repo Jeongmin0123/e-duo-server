@@ -1,14 +1,14 @@
-package com.educator.eduo.attendence.model.mapper;
+package com.educator.eduo.attendance.model.service;
 
 import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.ibatis.javassist.NotFoundException;
 
-import com.educator.eduo.attendence.model.dto.AttendanceResultDto;
-import com.educator.eduo.attendence.model.entity.Attendance;
+import com.educator.eduo.attendance.model.dto.AttendanceResultDto;
+import com.educator.eduo.attendance.model.entity.Attendance;
 
-public interface AttendanceMapper {
+public interface AttendanceService {
 
 	List<AttendanceResultDto> selectAttendanceList(String lectureId) throws NotFoundException;
 

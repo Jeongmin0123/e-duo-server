@@ -1,4 +1,4 @@
-package com.educator.eduo.attendence.model.entity;
+package com.educator.eduo.attendance.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

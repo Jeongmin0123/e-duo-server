@@ -35,14 +35,7 @@
 	
 	<update id="updateAssignment" parameterType="Attendance">
 		UPDATE attendance
-		<set>
-			<if test="assignment == 0">
-				assignment = #{assignment}, done_date = sysdate()
-			</if>
-			<if test="">
-				assignment = #{assignment}
-			</if>
-		</set>
+		SET assignment = #{assignment}, done_date = sysdate()
 		WHERE lecture_id = #{lectureId} and student_id = #{studentId};
 	</update>
 	
