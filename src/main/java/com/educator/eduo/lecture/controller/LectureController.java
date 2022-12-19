@@ -36,7 +36,7 @@ public class LectureController {
     }
     
     @PostMapping("/api/lecture")
-    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT')")
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
     public ResponseEntity<?> insertLecture(@RequestBody Lecture lecture) throws SQLException {
     	if(lectureService.insertLecture(lecture)) {
     		return new ResponseEntity<>(HttpStatus.OK);
@@ -57,8 +57,8 @@ public class LectureController {
     
     @DeleteMapping("/api/lecture")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT')")
-    public ResponseEntity<?> deleteLecture(@RequestBody String lectureId) throws SQLException {
-    	if(lectureService.deleteLecture(lectureId)) {
+    public ResponseEntity<?> deleteLecture(@RequestBody Lecture lecture) throws SQLException {
+    	if(lectureService.deleteLecture(lecture.getLectureId())) {
     		return new ResponseEntity<>(HttpStatus.OK);
     	} else {
     		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -67,8 +67,8 @@ public class LectureController {
     
     @GetMapping("/api/lecture")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT') or hasRole('ROLE_STUDENT')")
-    public ResponseEntity<?> selectAllLecture(@RequestBody String courseId) throws NotFoundException {
-    	List<LectureResultDto> lectureResultList = lectureService.selectAllLecture(courseId);
+    public ResponseEntity<?> selectAllLecture(@RequestBody Lecture lecture) throws NotFoundException {
+    	List<LectureResultDto> lectureResultList = lectureService.selectAllLecture(lecture.getCourseId());
     	return new ResponseEntity<>(lectureResultList, HttpStatus.OK);
     }
     

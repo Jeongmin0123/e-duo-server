@@ -4,12 +4,12 @@
 
 <mapper namespace="com.educator.eduo.attendance.model.mapper.AttendanceMapper">
 
-	<resultMap id="AttendanceResult" type="com.educator.eduo.attendance.model.entity.Attendance">
+	<resultMap id="AttendanceResult" type="com.educator.eduo.attendance.model.dto.AttendanceResultDto">
 		<id property="attendanceId" column="attendance_id" />
 		<result property="lectureId" column="lecture_id"/>
 		<result property="studentId" column="user_id"/>
 		<result property="schoolName" column="school_name" />
-		<result property="checkIn" column="checkIn"/>
+		<result property="checkIn" column="check_in"/>
 		<result property="studentName" column="name"/>
 		<result property="assignment" column="assignment"/>
 		<result property="doneDate" column="done_date"/>
@@ -30,26 +30,50 @@
 	<update id="updateAttendance" parameterType="Attendance">
 		UPDATE attendance
 		SET check_in = #{checkIn}
-		WHERE lecture_id = #{lectureId} and student_id = #{studentId};
+		WHERE lecture_id = #{lectureId} and user_id = #{studentId};
+	</update>
+	
+	<update id="registerAssignment" parameterType="Attendance">
+		UPDATE attendance
+		SET assignment = 1
+		WHERE lecture_id = #{lectureId};
 	</update>
 	
 	<update id="updateAssignment" parameterType="Attendance">
 		UPDATE attendance
-		SET assignment = #{assignment}, done_date = sysdate()
-		WHERE lecture_id = #{lectureId} and student_id = #{studentId};
+		<if test="assignment == 2">
+			SET assignment = #{assignment}, done_date = sysdate()
+		</if>
+		<if test="assignment == 1">
+			SET assignment = #{assignment}, done_date = null
+		</if>
+		WHERE lecture_id = #{lectureId} and user_id = #{studentId};
 	</update>
 	
 	<update id="updateTestScore" parameterType="Attendance">
 		UPDATE attendance
 		SET test_score = #{testScore}
-		WHERE lecture_id = #{lectureId} and student_id = #{studentId};
+		WHERE lecture_id = #{lectureId} and user_id = #{studentId};
 	</update>
 	
 	<insert id="insertAttendanceList" parameterType="java.util.List">
-		INSERT INTO lecture(user_id, lecture_id, assignment)
+		INSERT INTO attendance(user_id, lecture_id, assignment)
 		VALUES
 		<foreach collection="list" item="item" separator=",">
-			( #{item.userId}, #{item.lectureId}, #{item.assignment})
+			(#{item.userId}, #{item.lectureId}, #{item.assignment})
 		</foreach>
 	</insert>
+	
+	<delete id="deleteAttendanceList" parameterType="java.util.List">
+		DELETE FROM attendance
+		WHERE
+		<foreach collection="list" item="item" separator="OR">
+			(user_id = #{item.userId} and lecture_id = #{item.lectureId})
+		</foreach>
+	</delete>
+	
+	<delete id="deleteAttendance" parameterType="string">
+		DELETE FROM attendance
+		WHERE lecture_id = #{lectureId};
+	</delete>
 </mapper>

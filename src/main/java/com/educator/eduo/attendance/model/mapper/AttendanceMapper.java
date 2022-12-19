@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.javassist.NotFoundException;
 
 import com.educator.eduo.attendance.model.dto.AttendanceRegisterDto;
+import com.educator.eduo.attendance.model.dto.AttendanceRequestDto;
 import com.educator.eduo.attendance.model.dto.AttendanceResultDto;
 import com.educator.eduo.attendance.model.entity.Attendance;
 
@@ -15,12 +16,18 @@ public interface AttendanceMapper {
 
 	List<AttendanceResultDto> selectAttendanceList(String lectureId) throws NotFoundException;
 
-	boolean updateAttendance(Attendance attendance) throws SQLException;
+	boolean updateAttendance(AttendanceRequestDto attendance) throws SQLException;
 
-	boolean updateAssignment(Attendance attendance) throws SQLException;
+	boolean updateAssignment(AttendanceRequestDto attendance) throws SQLException;
 
-	boolean updatetestScore(Attendance attendance) throws SQLException;
+	boolean updateTestScore(AttendanceRequestDto attendance) throws SQLException;
 	
 	void insertAttendanceList(List<AttendanceRegisterDto> attendanceList) throws SQLException;
+
+	void deleteAttendanceList(List<AttendanceRegisterDto> attendanceList) throws SQLException;
+
+	boolean registerAssignment(Attendance attendance) throws SQLException;
+
+	boolean deleteAttendance(String lectureId) throws SQLException;
 
 }
