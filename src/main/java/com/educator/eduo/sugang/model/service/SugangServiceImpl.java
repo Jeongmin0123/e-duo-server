@@ -24,13 +24,13 @@ public class SugangServiceImpl implements SugangService {
 Logger logger = LoggerFactory.getLogger(SugangServiceImpl.class);
 	
 	private final SugangMapper sugangMapper;
-	private final AttendanceMapper attendancMapper;
+	private final AttendanceMapper attendanceMapper;
 	private final LectureMapper lectureMapper;
 	
 	@Autowired
 	public SugangServiceImpl(SugangMapper sugangMapper, AttendanceMapper attendanceMapper, LectureMapper lectureMapper) {
 		this.sugangMapper = sugangMapper;
-		this.attendancMapper = attendanceMapper;
+		this.attendanceMapper = attendanceMapper;
 		this.lectureMapper = lectureMapper;
 	}
 	
@@ -45,7 +45,10 @@ Logger logger = LoggerFactory.getLogger(SugangServiceImpl.class);
 		sugangMapper.confirmSugang(sugangRequestDto);
 		List<LectureResultDto> lecturelist = lectureMapper.selectSugangLecture(sugangRequestDto.getCourseId());
 		List<AttendanceRegisterDto> attendanceList = makeAttendanceList(lecturelist, sugangRequestDto.getUserId());
-		attendancMapper.insertAttendanceList(attendanceList);
+		for(int i = 0 ; i < attendanceList.size() ; i++) {
+			System.out.println(attendanceList.get(i).getUserId());
+		}
+		attendanceMapper.insertAttendanceList(attendanceList);
 		return;
 	}
 	
@@ -58,11 +61,13 @@ Logger logger = LoggerFactory.getLogger(SugangServiceImpl.class);
 		for(int i = 0 ; i < lecturelist.size() ; i++) {
 			LectureResultDto lecture = lecturelist.get(i);
 			AttendanceRegisterDto attendance = AttendanceRegisterDto.builder().lectureId(lecture.getLectureId()).userId(sugangRequestDto.getUserId()).build();
+			attendanceList.add(attendance);
 		}
+		attendanceMapper.deleteAttendanceList(attendanceList);
 		return;
 	}
 
-	private List<AttendanceRegisterDto> makeAttendanceList(List<LectureResultDto> lecturelist, String userId) {
+	public List<AttendanceRegisterDto> makeAttendanceList(List<LectureResultDto> lecturelist, String userId) {
 		List<AttendanceRegisterDto> attendanceList = new ArrayList<>();
 		for(int i = 0 ; i < lecturelist.size() ; i++) {
 			LectureResultDto lecture = lecturelist.get(i);
@@ -75,7 +80,7 @@ Logger logger = LoggerFactory.getLogger(SugangServiceImpl.class);
 		return attendanceList;
 	}
 	
-	private AttendanceRegisterDto buildAttendance(String lectureId, String userId, int assignment) {
+	public AttendanceRegisterDto buildAttendance(String lectureId, String userId, int assignment) {
 		return AttendanceRegisterDto.builder()
 				.userId(userId)
 				.lectureId(lectureId)

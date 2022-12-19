@@ -1,6 +1,7 @@
 package com.educator.eduo.sugang.controller;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.ibatis.javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -9,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +33,7 @@ public class SugangController {
 	}
 	
 	@PostMapping("/api/sugang")
-	@PreAuthorize("hasRole('ROLE_STUDENT')")
+	@PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')")
 	public ResponseEntity<?> insertSugang(@RequestBody SugangRequestDto sugangRequestDto) throws SQLException {
 		if(!sugangService.insertSugang(sugangRequestDto)) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
