@@ -13,37 +13,20 @@
 	</resultMap>
 
 	<insert id="insertSugang" parameterType="Sugang">
-		INSERT INTO lecture (user_id, course_id, start_date)
-		VALUES (#{userId}, #{courseId}, sysdate())
+		INSERT INTO lecture (user_id, course_id)
+		VALUES (#{userId}, #{courseId})
 	</insert>
 
-	<update id="updateLecture" parameterType="Lecture">
-		UPDATE lecture
-		<set>
-			<if test="lectureName != null">
-				lecture_name = #{lectureName},
-			</if>
-			<if test="lectureDate != null">
-				lecture_date = #{lectureDate},
-			</if>
-			<if test="startTime != null">
-				start_time = #{startTime},
-			</if>
-			<if test="endTime != null">
-				end_time = #{endTime},
-			</if>
-			<if test="description != null">
-				description = #{description},
-			</if>
-			<if test="lectureOrder != null">
-				lecture_order = {lectureOrder}
-			</if>
-		</set>
-		WHERE lecture_id = #{lectureId};
+	<update id="confirmSugang" parameterType="Sugang">
+		UPDATE sugang
+		SET state = 'ACCEPTED', start_date = sysdate()
+		WHERE user_id = #{userId} and course_id = #{courseId};
 	</update>
 	
-	<delete id="deleteLecture" parameterType="string">
-		DELETE FROM lecture
-		where lecture_id = #{lectureId};
-	</delete>
+	<update id="giveUpSugang" parameterType="Sugang">
+		UPDATE sugang
+		SET state = 'QUIT', end_date = sysdate()
+		WHERE user_id = #{userId} and course_id = #{courseId};
+	</update>
+	
 </mapper>
