@@ -6,17 +6,17 @@
 
 	<resultMap id="AttendanceResult" type="com.educator.eduo.attendance.model.entity.Attendance">
 		<id property="attendanceId" column="attendance_id" />
+		<result property="lectureId" column="lecture_id"/>
+		<result property="studentId" column="user_id"/>
 		<result property="schoolName" column="school_name" />
-		<result property="userId" column="user_id"/>
 		<result property="checkIn" column="checkIn"/>
-		<result property="name" column="name"/>
-	</resultMap>
-	<resultMap id="scheduleResult" type="Schedule">
-		<id property="scheduleId" column="schedule_id" />
-		<result property="courseId" column="course_id" />
+		<result property="studentName" column="name"/>
+		<result property="assignment" column="assignment"/>
+		<result property="doneDate" column="done_date"/>
+		<result property="testScore" column="test_score"/>
 	</resultMap>
 
-	<select id="selectTeacherCourseByCourseId" resultMap="teacherScheduleResult">
+	<select id="selectAttendanceList" resultMap="AttendanceResult">
 		SELECT a.attendance_id as attendance_id, s.school_name as school_name, s.user_id as user_id,
 		a.check_in as check_in, u.name as name, a.lecture_id as lecture_id, a.assignment as assignment, a.done_date as done_date, a.test_score as test_score
 		FROM attendance a
@@ -26,4 +26,22 @@
 		on u.user_id = s.user_id
 		where a.lecture_id = #{lectureId};
 	</select>
+	
+	<update id="updateAttendance" parameterType="Attendance">
+		UPDATE attendance
+		SET check_in = #{checkIn}
+		WHERE lecture_id = #{lectureId} and student_id = #{studentId};
+	</update>
+	
+	<update id="updateAssignment" parameterType="Attendance">
+		UPDATE attendance
+		SET assignment = #{assignment}, done_date = sysdate()
+		WHERE lecture_id = #{lectureId} and student_id = #{studentId};
+	</update>
+	
+	<update id="updateTestScore" parameterType="Attendance">
+		UPDATE attendance
+		SET test_score = #{testScore}
+		WHERE lecture_id = #{lectureId} and student_id = #{studentId};
+	</update>
 </mapper>

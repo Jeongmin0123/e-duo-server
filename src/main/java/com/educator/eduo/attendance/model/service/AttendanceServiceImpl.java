@@ -1,5 +1,6 @@
-package com.educator.eduo.attendence.model.service;
+package com.educator.eduo.attendance.model.service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.ibatis.javassist.NotFoundException;
@@ -8,8 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.educator.eduo.attendence.model.dto.AttendanceResultDto;
-import com.educator.eduo.attendence.model.mapper.AttendanceMapper;
+import com.educator.eduo.attendance.model.dto.AttendanceResultDto;
+import com.educator.eduo.attendance.model.entity.Attendance;
+import com.educator.eduo.attendance.model.mapper.AttendanceMapper;
 
 @Service
 public class AttendanceServiceImpl implements AttendanceService {
@@ -28,5 +30,18 @@ public class AttendanceServiceImpl implements AttendanceService {
 		if(attendanceResultList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
 		return attendanceResultList;
 	}
-
+	
+	@Override
+	public boolean updateAttendance(Attendance attendance) throws SQLException {
+		return attendanceMapper.updateAttendance(attendance);
+	}
+	
+	@Override
+	public boolean updateAssignment(Attendance attendance) throws SQLException {
+		return attendanceMapper.updateAssignment(attendance);
+	}
+	@Override
+	public boolean updatetestScore(Attendance attendance) throws SQLException {
+		return attendanceMapper.updatetestScore(attendance);
+	}
 }

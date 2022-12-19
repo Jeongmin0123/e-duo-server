@@ -1,4 +1,4 @@
-package com.educator.eduo.attendence.model.dto;
+package com.educator.eduo.attendance.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,9 +13,10 @@ public class AttendanceResultDto {
 	private String attendanceId;
 	private String lectureId;
 	private String studentId;
+	private String schoolName;
+	private String checkIn;
 	private String studentName;
 	private String assignment;
 	private String doneDate;
 	private String testScore;
-	private String checkIn;
 }
