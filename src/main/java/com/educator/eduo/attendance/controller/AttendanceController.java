@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.educator.eduo.attendance.model.dto.AttendanceRequestDto;
 import com.educator.eduo.attendance.model.dto.AttendanceResultDto;
 import com.educator.eduo.attendance.model.entity.Attendance;
 import com.educator.eduo.attendance.model.service.AttendanceService;
@@ -34,6 +35,18 @@ public class AttendanceController {
 		this.attendanceService = attendanceService;
 	}
 	
+	// 과제 입력
+	@PutMapping("/api/assignment/register")
+	@PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT')")
+	public ResponseEntity<?> registerAssignment(@RequestBody Attendance attendance) throws SQLException {
+		if(!attendanceService.registerAssignment(attendance)) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+	}
+	
+	// 출결, 과제, 점수 조회
 	@GetMapping("/api/attendance/{lectureId}")
 	@PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT')")
 	public ResponseEntity<?> selectAttendanceList(@PathVariable("lectureId") String lectureId) throws NotFoundException {
@@ -41,9 +54,10 @@ public class AttendanceController {
 		return new ResponseEntity<>(attendanceResultList,HttpStatus.OK);
 	}
 	
+	// 출석 상태 변경
 	@PutMapping("/api/attendance")
 	@PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT')")
-	public ResponseEntity<?> updateAttendance(@RequestBody Attendance attendance) throws SQLException {
+	public ResponseEntity<?> updateAttendance(@RequestBody AttendanceRequestDto attendance) throws SQLException {
 		if(!attendanceService.updateAttendance(attendance)) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} else {
@@ -51,9 +65,10 @@ public class AttendanceController {
 		}
 	}
 	
+	// 과제 제출 상태 변경
 	@PutMapping("/api/assignment")
 	@PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT')")
-	public ResponseEntity<?> updateAssignment(@RequestBody Attendance attendance) throws SQLException {
+	public ResponseEntity<?> updateAssignment(@RequestBody AttendanceRequestDto attendance) throws SQLException {
 		if(!attendanceService.updateAssignment(attendance)) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} else {
@@ -61,10 +76,11 @@ public class AttendanceController {
 		}
 	}
 	
+	// 점수 상태 변경
 	@PutMapping("/api/testScore")
 	@PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT')")
-	public ResponseEntity<?> updateTestScore(@RequestBody Attendance attendance) throws SQLException {
-		if(!attendanceService.updatetestScore(attendance)) {
+	public ResponseEntity<?> updateTestScore(@RequestBody AttendanceRequestDto attendance) throws SQLException {
+		if(!attendanceService.updateTestScore(attendance)) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<>(HttpStatus.OK);

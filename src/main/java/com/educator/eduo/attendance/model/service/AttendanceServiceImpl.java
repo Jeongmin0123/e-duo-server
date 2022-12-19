@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.educator.eduo.attendance.model.dto.AttendanceRequestDto;
 import com.educator.eduo.attendance.model.dto.AttendanceResultDto;
 import com.educator.eduo.attendance.model.entity.Attendance;
 import com.educator.eduo.attendance.model.mapper.AttendanceMapper;
@@ -32,16 +33,20 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 	
 	@Override
-	public boolean updateAttendance(Attendance attendance) throws SQLException {
+	public boolean updateAttendance(AttendanceRequestDto attendance) throws SQLException {
 		return attendanceMapper.updateAttendance(attendance);
 	}
 	
 	@Override
-	public boolean updateAssignment(Attendance attendance) throws SQLException {
+	public boolean updateAssignment(AttendanceRequestDto attendance) throws SQLException {
 		return attendanceMapper.updateAssignment(attendance);
 	}
 	@Override
-	public boolean updatetestScore(Attendance attendance) throws SQLException {
-		return attendanceMapper.updatetestScore(attendance);
+	public boolean updateTestScore(AttendanceRequestDto attendance) throws SQLException {
+		return attendanceMapper.updateTestScore(attendance);
+	}
+	@Override
+	public boolean registerAssignment(Attendance attendance) throws SQLException {
+		return attendanceMapper.registerAssignment(attendance);
 	}
 }
