@@ -4,7 +4,7 @@
 
 <mapper namespace="com.educator.eduo.lecture.model.mapper.LectureMapper">
 
-	<resultMap id="lectureResult" type="com.educator.eduo.lecture.model.entity.Lecture">
+	<resultMap id="lectureAllResult" type="com.educator.eduo.lecture.model.dto.LectureResultDto">
 		<id property="lectureId" column="lecture_id"/>
 		<result property="courseId" column="course_id"/>
 		<result property="lectureName" column="lecture_name"/>
@@ -16,14 +16,15 @@
 		<result property="existTest" column="exist_test"/>		
 		<result property="testType" column="test_type"/>		
 	</resultMap>
-	
-	<resultMap id="lectureAllResult" type="LectureResultDto">
-		<association property="lecture" column="lecture_id" javaType="Lecture" resultMap="lectureResult"/>
+	<resultMap type="com.educator.eduo.lecture.model.dto.LectureAttendanceRegisterDto" id="LectureAttendanceRegisterDto">
+		<id property="lectureId" column="lecture_id"/>
+		<result property="userId" column="user_id"/>
+		<result property="existAssignment" column="exist_assignment"/>
 	</resultMap>
 
 	<insert id="insertLecture" parameterType="Lecture">
-		INSERT INTO lecture (lecture_name, lecture_date, start_time, end_time, description, exist_assignment, exist_test, test_type)
-		VALUES (#{lectureName}, #{lectureDate}, #{startTime}, #{endTime}, #{description}, #{existAssignment}, #{existTest}, #{testType});
+		INSERT INTO lecture (course_id, lecture_name, lecture_date, start_time, end_time, description, exist_assignment, exist_test, test_type)
+		VALUES (#{courseId}, #{lectureName}, #{lectureDate}, #{startTime}, #{endTime}, #{description}, #{existAssignment}, #{existTest}, #{testType});
 	</insert>
 
 	<update id="updateLecture" parameterType="Lecture">
@@ -44,17 +45,32 @@
 			<if test="description != null">
 				description = #{description},
 			</if>
-			<if test="lectureOrder != null">
-				lecture_order = {lectureOrder}
+			<if test="existAssignment != null">
+				exist_assignment = #{existAssignment},
+			</if>
+			<if test="existTest != null">
+				exist_test = #{existTest},
+			</if>
+			<if test="testType != null">
+				test_type = #{testType}
 			</if>
 		</set>
 		WHERE lecture_id = #{lectureId};
 	</update>
 	
-	<delete id="deleteLecture" parameterType="string">
+	<delete id="deleteLecture" parameterType="String">
 		DELETE FROM lecture
 		where lecture_id = #{lectureId};
 	</delete>
+	<select id="selectLecture" parameterType="Lecture" resultMap="LectureAttendanceRegisterDto">
+		SELECT l.lecture_id as lecture_id, s.user_id as user_id, l.exist_assignment as exist_assignment
+		FROM lecture l
+		inner join sugang s
+		on l.course_id = s.course_id
+		where l.lecture_id = 
+		(select lecture_id from lecture
+		where course_id = #{courseId} and lecture_date = #{lectureDate});
+	</select>
 	<select id="selectAllLecture" parameterType="string" resultMap="lectureAllResult">
 		SELECT lecture_id, course_id, lecture_name, lecture_date, start_time, end_time, description, exist_assignment, exist_test, test_type
 		FROM lecture

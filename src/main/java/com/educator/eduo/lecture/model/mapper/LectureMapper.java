@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.javassist.NotFoundException;
 
+import com.educator.eduo.lecture.model.dto.LectureAttendanceRegisterDto;
 import com.educator.eduo.lecture.model.dto.LectureResultDto;
 import com.educator.eduo.lecture.model.entity.Lecture;
 
@@ -23,4 +24,6 @@ public interface LectureMapper {
 	void insertAllLecture(List<Lecture> lectureList) throws SQLException;
 
 	List<LectureResultDto> selectSugangLecture(String courseId) throws NotFoundException;
+
+	List<LectureAttendanceRegisterDto> selectLecture(Lecture lecture) throws SQLException;
 }
