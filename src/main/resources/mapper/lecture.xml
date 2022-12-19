@@ -12,7 +12,9 @@
 		<result property="startTime" column="start_time"/>
 		<result property="endTime" column="end_time"/>
 		<result property="description" column="description"/>
-		<result property="lectureOrder" column="lecture_order"/>
+		<result property="existAssignment" column="exist_assignment"/>		
+		<result property="existTest" column="exist_test"/>		
+		<result property="testType" column="test_type"/>		
 	</resultMap>
 	
 	<resultMap id="lectureAllResult" type="LectureResultDto">
@@ -20,8 +22,8 @@
 	</resultMap>
 
 	<insert id="insertLecture" parameterType="Lecture">
-		INSERT INTO lecture (lecture_name, lecture_date, start_time, end_time, description, lecture_order)
-		VALUES (#{lectureName}, #{lectureDate}, #{startTime}, #{endTime}, #{description}, #{lectureOrder})
+		INSERT INTO lecture (lecture_name, lecture_date, start_time, end_time, description, exist_assignment, exist_test, test_type)
+		VALUES (#{lectureName}, #{lectureDate}, #{startTime}, #{endTime}, #{description}, #{existAssignment}, #{existTest}, #{testType});
 	</insert>
 
 	<update id="updateLecture" parameterType="Lecture">
@@ -54,9 +56,15 @@
 		where lecture_id = #{lectureId};
 	</delete>
 	<select id="selectAllLecture" parameterType="string" resultMap="lectureAllResult">
-		SELECT lecture_id, course_id, lecture_name, lecture_date, start_time, end_time, description, lecture_order
+		SELECT lecture_id, course_id, lecture_name, lecture_date, start_time, end_time, description, exist_assignment, exist_test, test_type
 		FROM lecture
-		where lecture_id Like CONCAT('%', #{courseId}, '%');
+		where course_id = #{courseId};
+	</select>
+	
+	<select id="selectSugangLecture" parameterType="string" resultMap="lectureAllResult">
+		SELECT lecture_id, exist_assignment
+		FROM lecture
+		where course_id = #{courseId} and lecture_date >= sysdate();
 	</select>
 
 	<insert id="insertAllLecture" parameterType="java.util.List">

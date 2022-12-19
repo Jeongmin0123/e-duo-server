@@ -44,4 +44,12 @@
 		SET test_score = #{testScore}
 		WHERE lecture_id = #{lectureId} and student_id = #{studentId};
 	</update>
+	
+	<insert id="insertAttendanceList" parameterType="java.util.List">
+		INSERT INTO lecture(user_id, lecture_id, assignment)
+		VALUES
+		<foreach collection="list" item="item" separator=",">
+			( #{item.userId}, #{item.lectureId}, #{item.assignment})
+		</foreach>
+	</insert>
 </mapper>

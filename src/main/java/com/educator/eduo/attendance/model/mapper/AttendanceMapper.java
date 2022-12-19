@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.javassist.NotFoundException;
 
+import com.educator.eduo.attendance.model.dto.AttendanceRegisterDto;
 import com.educator.eduo.attendance.model.dto.AttendanceResultDto;
 import com.educator.eduo.attendance.model.entity.Attendance;
 
@@ -19,5 +20,7 @@ public interface AttendanceMapper {
 	boolean updateAssignment(Attendance attendance) throws SQLException;
 
 	boolean updatetestScore(Attendance attendance) throws SQLException;
+	
+	void insertAttendanceList(List<AttendanceRegisterDto> attendanceList) throws SQLException;
 
 }
