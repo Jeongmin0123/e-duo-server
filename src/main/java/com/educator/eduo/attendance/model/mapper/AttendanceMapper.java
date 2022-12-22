@@ -10,6 +10,7 @@ import com.educator.eduo.attendance.model.dto.AttendanceRegisterDto;
 import com.educator.eduo.attendance.model.dto.AttendanceRequestDto;
 import com.educator.eduo.attendance.model.dto.AttendanceResultDto;
 import com.educator.eduo.attendance.model.entity.Attendance;
+import com.educator.eduo.sugang.model.dto.SugangRequestDto;
 
 @Mapper
 public interface AttendanceMapper {
@@ -29,5 +30,7 @@ public interface AttendanceMapper {
 	boolean registerAssignment(Attendance attendance) throws SQLException;
 
 	boolean deleteAttendance(String lectureId) throws SQLException;
+
+	List<AttendanceResultDto> selectSugangAttendance(SugangRequestDto sugangRequestDto) throws NotFoundException, SQLException;
 
 }

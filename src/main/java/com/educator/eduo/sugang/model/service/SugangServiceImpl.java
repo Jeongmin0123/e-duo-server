@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.educator.eduo.attendance.model.dto.AttendanceRegisterDto;
+import com.educator.eduo.attendance.model.dto.AttendanceResultDto;
 import com.educator.eduo.attendance.model.mapper.AttendanceMapper;
 import com.educator.eduo.lecture.model.dto.LectureResultDto;
 import com.educator.eduo.lecture.model.mapper.LectureMapper;
@@ -86,6 +87,11 @@ Logger logger = LoggerFactory.getLogger(SugangServiceImpl.class);
 				.lectureId(lectureId)
 				.assignment(assignment)
 				.build();
+	}
+
+	@Override
+	public List<AttendanceResultDto> selectSugangAttendance(SugangRequestDto sugangRequestDto) throws SQLException, NotFoundException {
+		return attendanceMapper.selectSugangAttendance(sugangRequestDto);
 	}
 	
 }

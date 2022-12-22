@@ -27,6 +27,21 @@
 		where a.lecture_id = #{lectureId};
 	</select>
 	
+	<select id="selectSugangAttendance" parameterType="SugangRequestDto" resultMap="AttendanceResult">
+		SELECT a.attendance_id as attendance_id, s.school_name as school_name, s.user_id as user_id,
+		a.check_in as check_in, u.name as name, a.lecture_id as lecture_id, a.assignment as assignment, a.done_date as done_date, a.test_score as test_score
+		FROM attendance a
+		inner join student s
+		on a.user_id = s.user_id
+		inner join user u
+		on u.user_id = s.user_id
+		where a.user_id = #{userId} and a.lecture_id in (
+			SELECT *
+			FROM lecture
+			where course_id = #{courseId}
+		);
+	</select>
+	
 	<update id="updateAttendance" parameterType="Attendance">
 		UPDATE attendance
 		SET check_in = #{checkIn}
