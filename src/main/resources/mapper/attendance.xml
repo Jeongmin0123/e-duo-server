@@ -14,11 +14,13 @@
 		<result property="assignment" column="assignment"/>
 		<result property="doneDate" column="done_date"/>
 		<result property="testScore" column="test_score"/>
+		<result property="lectureDate" column="lecture_date"/>
+		<result property="parentPhone" column="parent_phone"/>
 	</resultMap>
 
 	<select id="selectAttendanceList" resultMap="AttendanceResult">
 		SELECT a.attendance_id as attendance_id, s.school_name as school_name, s.user_id as user_id,
-		a.check_in as check_in, u.name as name, a.lecture_id as lecture_id, a.assignment as assignment, a.done_date as done_date, a.test_score as test_score
+		a.check_in as check_in, u.name as name, a.lecture_id as lecture_id, a.assignment as assignment, a.done_date as done_date, a.test_score as test_score, s.parent_phone as parent_phone
 		FROM attendance a
 		inner join student s
 		on a.user_id = s.user_id
@@ -29,12 +31,14 @@
 	
 	<select id="selectSugangAttendance" parameterType="SugangRequestDto" resultMap="AttendanceResult">
 		SELECT a.attendance_id as attendance_id, s.school_name as school_name, s.user_id as user_id,
-		a.check_in as check_in, u.name as name, a.lecture_id as lecture_id, a.assignment as assignment, a.done_date as done_date, a.test_score as test_score
+		a.check_in as check_in, u.name as name, a.lecture_id as lecture_id, a.assignment as assignment, a.done_date as done_date, a.test_score as test_score, l.lecture_date as lecture_date
 		FROM attendance a
 		inner join student s
 		on a.user_id = s.user_id
 		inner join user u
 		on u.user_id = s.user_id
+		inner join lecture l
+		on a.lecture_id = l.lecture_id
 		where a.user_id = #{userId} and a.lecture_id in (
 			SELECT *
 			FROM lecture
