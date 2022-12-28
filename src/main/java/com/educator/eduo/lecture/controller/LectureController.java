@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,20 +56,20 @@ public class LectureController {
     	}
     }
     
-    @DeleteMapping("/api/lecture")
+    @DeleteMapping("/api/lecture/{lectureId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT')")
-    public ResponseEntity<?> deleteLecture(@RequestBody Lecture lecture) throws SQLException {
-    	if(lectureService.deleteLecture(lecture.getLectureId())) {
+    public ResponseEntity<?> deleteLecture(@PathVariable("lectureId") String lectureId) throws SQLException {
+    	if(lectureService.deleteLecture(lectureId)) {
     		return new ResponseEntity<>(HttpStatus.OK);
     	} else {
     		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     	}
     }
     
-    @GetMapping("/api/lecture")
+    @GetMapping("/api/lecture/{courseId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT') or hasRole('ROLE_STUDENT')")
-    public ResponseEntity<?> selectAllLecture(@RequestBody Lecture lecture) throws NotFoundException {
-    	List<LectureResultDto> lectureResultList = lectureService.selectAllLecture(lecture.getCourseId());
+    public ResponseEntity<?> selectAllLecture(@PathVariable("courseId") String courseId) throws NotFoundException {
+    	List<LectureResultDto> lectureResultList = lectureService.selectAllLecture(courseId);
     	return new ResponseEntity<>(lectureResultList, HttpStatus.OK);
     }
     

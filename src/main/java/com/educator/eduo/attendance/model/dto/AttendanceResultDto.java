@@ -19,4 +19,6 @@ public class AttendanceResultDto {
 	private String assignment;
 	private String doneDate;
 	private String testScore;
+	private String lectureDate;
+	private String parentPhone;
 }

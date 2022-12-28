@@ -56,7 +56,7 @@ public class SugangController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
-	@GetMapping("/api/sugang")
+	@PostMapping("/api/sugang/attendance")
 	@PreAuthorize("hasRole('ROLE_STUDENT')")
 	public ResponseEntity<?> selectSugangAttendance(@RequestBody SugangRequestDto sugangRequestDto) throws SQLException, NotFoundException {
 		List<AttendanceResultDto> attendanceList = sugangService.selectSugangAttendance(sugangRequestDto);
