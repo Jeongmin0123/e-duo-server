@@ -46,27 +46,31 @@
 		);
 	</select>
 	
-	<update id="updateAttendance" parameterType="Attendance">
-		UPDATE attendance
-		SET check_in = #{checkIn}
-		WHERE lecture_id = #{lectureId} and user_id = #{studentId};
+	<update id="updateAttendance" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=",">
+			UPDATE attendance
+			SET check_in = #{item.checkIn}
+			WHERE lecture_id = #{item.lectureId} and user_id = #{item.studentId};
+		</foreach>
 	</update>
 	
-	<update id="registerAssignment" parameterType="Attendance">
+	<update id="registerAssignment" parameterType="java.util.List">
 		UPDATE attendance
 		SET assignment = 1
 		WHERE lecture_id = #{lectureId};
 	</update>
 	
 	<update id="updateAssignment" parameterType="Attendance">
-		UPDATE attendance
-		<if test="assignment == 2">
-			SET assignment = #{assignment}, done_date = sysdate()
-		</if>
-		<if test="assignment == 1">
-			SET assignment = #{assignment}, done_date = null
-		</if>
-		WHERE lecture_id = #{lectureId} and user_id = #{studentId};
+		<foreach collection="list" item="item" separator=",">
+			UPDATE attendance
+			<if test="assignment == 2">
+				SET assignment = #{item.assignment}, done_date = sysdate()
+			</if>
+			<if test="assignment == 1">
+				SET assignment = #{item.assignment}, done_date = null
+			</if>
+			WHERE lecture_id = #{item.lectureId} and user_id = #{item.studentId};
+		</foreach>
 	</update>
 	
 	<update id="updateTestScore" parameterType="Attendance">

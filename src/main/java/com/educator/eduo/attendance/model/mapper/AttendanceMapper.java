@@ -17,9 +17,9 @@ public interface AttendanceMapper {
 
 	List<AttendanceResultDto> selectAttendanceList(String lectureId) throws NotFoundException;
 
-	boolean updateAttendance(AttendanceRequestDto attendance) throws SQLException;
+	boolean updateAttendance(List<AttendanceRequestDto> attendancelist) throws SQLException;
 
-	boolean updateAssignment(AttendanceRequestDto attendance) throws SQLException;
+	boolean updateAssignment(List<AttendanceRequestDto> attendancelist) throws SQLException;
 
 	boolean updateTestScore(AttendanceRequestDto attendance) throws SQLException;
 	

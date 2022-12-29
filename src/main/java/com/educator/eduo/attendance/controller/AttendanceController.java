@@ -57,8 +57,8 @@ public class AttendanceController {
 	// 출석 상태 변경
 	@PutMapping("/api/attendance")
 	@PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT')")
-	public ResponseEntity<?> updateAttendance(@RequestBody AttendanceRequestDto attendance) throws SQLException {
-		if(!attendanceService.updateAttendance(attendance)) {
+	public ResponseEntity<?> updateAttendance(@RequestBody List<AttendanceRequestDto> attendancelist) throws SQLException {
+		if(!attendanceService.updateAttendance(attendancelist)) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -68,8 +68,8 @@ public class AttendanceController {
 	// 과제 제출 상태 변경
 	@PutMapping("/api/assignment")
 	@PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT')")
-	public ResponseEntity<?> updateAssignment(@RequestBody AttendanceRequestDto attendance) throws SQLException {
-		if(!attendanceService.updateAssignment(attendance)) {
+	public ResponseEntity<?> updateAssignment(@RequestBody List<AttendanceRequestDto> attendancelist) throws SQLException {
+		if(!attendanceService.updateAssignment(attendancelist)) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} else {
 			return new ResponseEntity<>(HttpStatus.OK);

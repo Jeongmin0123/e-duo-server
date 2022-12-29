@@ -91,4 +91,10 @@
 			#{item.existAssignment}, #{item.existTest}, #{item.testType})
 		</foreach>
 	</insert>
+	
+	<update id="modifyExistAssignment" parameterType="string">
+		UPDATE lecture
+		SET exist_assignment = 1
+		where lecture_id = {lectureId};
+	</update>
 </mapper>
