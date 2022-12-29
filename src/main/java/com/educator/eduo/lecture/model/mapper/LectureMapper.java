@@ -26,4 +26,6 @@ public interface LectureMapper {
 	List<LectureResultDto> selectSugangLecture(String courseId) throws NotFoundException;
 
 	List<LectureAttendanceRegisterDto> selectLecture(Lecture lecture) throws SQLException;
+
+	void modifyExistAssignment(String lectureId) throws SQLException;
 }
