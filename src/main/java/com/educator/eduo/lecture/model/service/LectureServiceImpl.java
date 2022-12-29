@@ -16,6 +16,7 @@ import com.educator.eduo.attendance.model.entity.Attendance;
 import com.educator.eduo.attendance.model.mapper.AttendanceMapper;
 import com.educator.eduo.lecture.model.dto.LectureAttendanceRegisterDto;
 import com.educator.eduo.lecture.model.dto.LectureResultDto;
+import com.educator.eduo.lecture.model.dto.TodayLectureResultDto;
 import com.educator.eduo.lecture.model.entity.Lecture;
 import com.educator.eduo.lecture.model.mapper.LectureMapper;
 
@@ -82,6 +83,14 @@ public class LectureServiceImpl implements LectureService {
 		List<LectureResultDto> lectureResultList = lectureMapper.selectAllLecture(courseId);
 		if(lectureResultList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
 		return lectureResultList;
+	}
+
+	@Override
+	@Transactional
+	public List<TodayLectureResultDto> selectTodayLecture(String userId) throws NotFoundException {
+		List<TodayLectureResultDto> todayLectureList = lectureMapper.selectTodayLecture(userId);
+		if(todayLectureList.isEmpty()) throw new NotFoundException("해당 내용이 존재하지 않습니다.");
+		return todayLectureList;
 	}
 
 }

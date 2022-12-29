@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.educator.eduo.lecture.model.dto.LectureResultDto;
 import com.educator.eduo.lecture.model.dto.TodayLectureRequestDto;
+import com.educator.eduo.lecture.model.dto.TodayLectureResultDto;
 import com.educator.eduo.lecture.model.entity.Lecture;
 import com.educator.eduo.lecture.model.service.LectureService;
 
@@ -77,7 +78,8 @@ public class LectureController {
     @PostMapping("/api/lecture/today")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_ASSISTANT') or hasRole('ROLE_STUDENT')")
     public ResponseEntity<?> selectTodayLecture(@RequestBody TodayLectureRequestDto todayRequestDto) throws NotFoundException {
-    	return new ResponseEntity<>(HttpStatus.OK);
+    	List<TodayLectureResultDto> todayLectureList = lectureService.selectTodayLecture(todayRequestDto.getUserId());
+    	return new ResponseEntity<>(todayLectureList,HttpStatus.OK);
     }
     
 }

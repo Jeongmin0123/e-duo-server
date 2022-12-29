@@ -8,6 +8,7 @@ import org.apache.ibatis.javassist.NotFoundException;
 
 import com.educator.eduo.lecture.model.dto.LectureAttendanceRegisterDto;
 import com.educator.eduo.lecture.model.dto.LectureResultDto;
+import com.educator.eduo.lecture.model.dto.TodayLectureResultDto;
 import com.educator.eduo.lecture.model.entity.Lecture;
 
 @Mapper
@@ -28,4 +29,6 @@ public interface LectureMapper {
 	List<LectureAttendanceRegisterDto> selectLecture(Lecture lecture) throws SQLException;
 
 	void modifyExistAssignment(String lectureId) throws SQLException;
+
+	List<TodayLectureResultDto> selectTodayLecture(String userId) throws NotFoundException;
 }
